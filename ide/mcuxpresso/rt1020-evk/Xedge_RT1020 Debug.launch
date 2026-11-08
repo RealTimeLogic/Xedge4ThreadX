@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<launchConfiguration type="com.crt.dsfdebug.crtmcu.launchType">
+  <stringAttribute key="com.crt.ctrlcenter.OFSemuDetails" value="LinkServer" />
+  <stringAttribute key="com.crt.ctrlcenter.currentWireType" value="SWD" />
+  <stringAttribute key="com.nxp.mcuxpresso.ide.probe.type" value="LinkServer" />
+  <stringAttribute key="com.nxp.mcuxpresso.ide.probe.name" value="CMSIS-DAP" />
+  <stringAttribute key="debug.level" value="2" />
+  <stringAttribute key="gdbserver.host" value="localhost" />
+  <stringAttribute key="gdbserver.port" value="10989" />
+  <stringAttribute key="internal.wiretype" value="SWD" />
+  <stringAttribute key="internal.semihost" value="Off" />
+  <stringAttribute key="internal.resethandling" value="SYSRESETREQ" />
+  <stringAttribute key="internal.reset.script" value="" />
+  <stringAttribute key="internal.connect.script" value="RT1020_connect.scp" />
+  <stringAttribute key="misc.options" value="--no-packed" />
+  <stringAttribute key="ondisconnect" value="cont" />
+  <stringAttribute key="run" value="cont" />
+  <stringAttribute key="org.eclipse.cdt.launch.PROJECT_ATTR" value="Xedge_RT1020" />
+  <stringAttribute key="org.eclipse.cdt.launch.PROGRAM_NAME" value="Debug/xedge.elf" />
+  <stringAttribute key="org.eclipse.cdt.launch.PROJECT_BUILD_CONFIG_ID_ATTR" value="com.crt.advproject.config.exe.debug.xedge" />
+  <stringAttribute key="org.eclipse.cdt.launch.DEBUGGER_START_MODE" value="remote" />
+  <stringAttribute key="org.eclipse.cdt.dsf.gdb.DEBUG_NAME" value="arm-none-eabi-gdb" />
+  <stringAttribute key="org.eclipse.cdt.debug.gdbjtag.core.stopAt" value="main" />
+  <stringAttribute key="org.eclipse.cdt.debug.gdbjtag.core.initCommands" value="set substitute-path build/boards Debug/boards&#10;set substitute-path build/resources Debug/resources&#10;set substitute-path deps ../../../.deps&#10;set substitute-path build ../../..&#10;set non-stop on&#10;set pagination off&#10;set mi-async&#10;set remotetimeout 60&#10;##target_extended_remote##&#10;set mem inaccessible-by-default ${mem.access}&#10;mon ondisconnect ${ondisconnect}&#10;set arm force-mode thumb&#10;${load}&#10;" />
+  <stringAttribute key="org.eclipse.cdt.debug.gdbjtag.core.runCommands" value="${run}&#10;" />
+  <booleanAttribute key="com.crt.ctrlcenter.crtInit" value="true" />
+  <booleanAttribute key="com.crt.ctrlcenter.saveState" value="true" />
+  <booleanAttribute key="com.crt.ctrlcenter.mainBreakIsHardware" value="true" />
+  <booleanAttribute key="gdbserver.start" value="true" />
+  <booleanAttribute key="attach" value="false" />
+  <booleanAttribute key="mem.access" value="false" />
+  <booleanAttribute key="vector.catch" value="true" />
+  <booleanAttribute key="org.eclipse.cdt.dsf.gdb.NON_STOP" value="true" />
+  <booleanAttribute key="org.eclipse.cdt.debug.gdbjtag.core.loadImage" value="true" />
+  <booleanAttribute key="org.eclipse.cdt.debug.gdbjtag.core.loadSymbols" value="true" />
+  <booleanAttribute key="org.eclipse.cdt.debug.gdbjtag.core.setStopAt" value="true" />
+  <booleanAttribute key="org.eclipse.cdt.debug.gdbjtag.core.setResume" value="false" />
+  <intAttribute key="com.crt.ctrlcenter.version" value="6" />
+  <stringAttribute key="org.eclipse.cdt.launch.WORKING_DIRECTORY" value="${workspace_loc:/Xedge_RT1020}" />
+</launchConfiguration>

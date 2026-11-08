@@ -1,0 +1,749 @@
+/*
+ *     ____             _________                __                _
+ *    / __ \___  ____ _/ /_  __(_)___ ___  ___  / /   ____  ____ _(_)____
+ *   / /_/ / _ \/ __ `/ / / / / / __ `__ \/ _ \/ /   / __ \/ __ `/ / ___/
+ *  / _, _/  __/ /_/ / / / / / / / / / / /  __/ /___/ /_/ / /_/ / / /__
+ * /_/ |_|\___/\__,_/_/ /_/ /_/_/ /_/ /_/\___/_____/\____/\__, /_/\___/
+ *                                                       /____/
+ *
+ *                  Barracuda Embedded Web-Server
+ *
+ ****************************************************************************
+ *
+ *
+ *   COPYRIGHT:  Real Time Logic, 2026
+ *
+ *   This software is copyrighted by and is the sole property of Real
+ *   Time Logic LLC.  All rights, title, ownership, or other interests in
+ *   the software remain the property of Real Time Logic LLC.  This
+ *   software may only be used in accordance with the terms and
+ *   conditions stipulated in the corresponding license agreement under
+ *   which the software has been supplied.  Any unauthorized use,
+ *   duplication, transmission, distribution, or disclosure of this
+ *   software is expressly forbidden.
+ *
+ *   This Copyright notice may not be removed or modified without prior
+ *   written consent of Real Time Logic LLC.
+ *
+ *   Real Time Logic LLC. reserves the right to modify this software
+ *   without notice.
+ *
+ *               http://www.realtimelogic.com
+ ****************************************************************************
+ *
+ *
+ */
+
+/* Xedge startup for the NXP MIMXRT1020-EVK, but is sufficiently
+ * generic to act as a starting point for any board. The code
+ * initializes ThreadX, NetX Duo, and FileX/LevelX. Board support owns
+ * Ethernet, flash and native workers; Barracuda App Server (BAS) owns
+ * the server, Lua and application callbacks.
+ *
+ * Startup: main -> ThreadX -> tx_application_define -> application -> barracuda.
+ * Time event: synchronizeTime -> flag -> Lua timer -> ThreadJob -> _XedgeEvent.
+ *
+ * The sections below separate board support, BAS/Xedge hooks, native workers
+ * and the startup code that connects them. See readme.txt for SDK, linker,
+ * configuration, resources and flash-partition requirements.
+ */
+
+/* BAS/Xedge API. */
+#include "xedge.h"
+
+/* ThreadX middleware and NXP board/driver APIs. */
+#include "board.h"
+#include "pin_mux.h"
+#include "clock_config.h"
+#include "fsl_debug_console.h"
+#include "fsl_gpio.h"
+#include "fsl_iomuxc.h"
+#include "fsl_trng.h"
+#include "nxd_dns.h"
+#include "nxd_dhcp_client.h"
+#include "fx_api.h"
+#include "lx_api.h"
+#include "fx_levelx_driver.h"
+#include "mflash_drv.h"
+
+/****************************************************************************
+ * ThreadX / NetX Duo / FileX: board resources and support
+ ***************************************************************************/
+
+/* UTC Unix seconds supplied by the build system, used only until SNTP. */
+#ifndef RT1020_BUILD_EPOCH
+#error Define RT1020_BUILD_EPOCH as UTC Unix seconds for the initial clock fallback
+#endif
+
+/* SNTP hostname and UDP port; override for a local time server if needed. */
+#ifndef XEDGE_NTP_SERVER
+#define XEDGE_NTP_SERVER "pool.ntp.org"
+#endif
+#ifndef XEDGE_NTP_PORT
+#define XEDGE_NTP_PORT 123
+#endif
+
+/* These objects outlive the Lua VM and survive an Xedge debugger restart.
+ * The noncached packet buffers are shared with Ethernet DMA.
+ */
+static NX_IP ip;
+static NX_IP* interfaces[] = {&ip, NULL};
+static NX_PACKET_POOL pool, sendPool;
+static NX_DHCP dhcp;
+static NX_DNS dns;
+static TX_THREAD appThread, serviceThread, timeThread;
+static ULONG appStack[65536 / 4], serviceStack[8192 / 4], ipStack[8192 / 4];
+static ULONG timeStack[8192 / sizeof(ULONG)];
+static ULONG heap[24 * 1024 * 1024 / 4], arp[4096 / 4];
+AT_NONCACHEABLE_SECTION_ALIGN(static UCHAR packets[768 * 1024], 32);
+AT_NONCACHEABLE_SECTION_ALIGN(static UCHAR sendPackets[512 * 1024], 32);
+
+/* Native-to-BAS handoff: set only after SNTP updates both clocks, never
+ * for the build-time fallback. The Lua timer reads this flag, not NetX state.
+ */
+static volatile UINT timeSynchronized;
+
+/* FileX/LevelX data partition; firmware occupies the preceding 4 MiB.
+ * The NXP LevelX driver reads g_disk_infor to locate this partition.
+ */
+#define DISK_OFFSET (4UL * 1024 * 1024)
+#define DISK_BYTES (4UL * 1024 * 1024)
+#define BLOCK_BYTES 8192UL
+#define SECTOR_BYTES (LX_NOR_SECTOR_SIZE * sizeof(ULONG))
+fx_levelx_disk_infor_t g_disk_infor = {DISK_BYTES, DISK_OFFSET, BLOCK_BYTES};
+static FX_MEDIA media;
+static ULONG mediaMemory[8192 / sizeof(ULONG)];
+
+extern void nx_link_driver(NX_IP_DRIVER*);
+extern VOID _fx_levelx_driver(FX_MEDIA*);
+extern UINT boardStorageInit(void);
+extern UINT boardStorageFlush(void);
+
+/* Stop the board after an unrecoverable startup or storage error. CHECK
+ * passes the failing expression and source line; fatal() uses the same halt
+ * path for BAS errors.
+ */
+static void
+fail(const char* what, unsigned status, unsigned line)
+{
+   PRINTF("FATAL %s status=%u line=%u\r\n", what, status, line);
+   __disable_irq();
+   for(;;)
+      __WFI();
+}
+
+
+#define CHECK(x) \
+   do \
+   { \
+      unsigned s_ = (x); \
+      if(s_) \
+         fail(#x, s_, __LINE__); \
+   } while(0)
+
+
+/* Called by NXP's NetX Ethernet driver to configure the PHY management
+ * interface (MDIO). Return the peripheral clock frequency in Hz.
+ */
+uint32_t
+BOARD_GetMDIOClock(void)
+{
+   return CLOCK_GetFreq(kCLOCK_IpgClk);
+}
+
+
+/* Called once by application(), before Xedge can open files. Open the
+ * FileX volume over LevelX wear leveling and keep media alive for DiskIo.
+ * If mounting fails, this evaluation firmware erases and reformats only
+ * the data partition. Return FX_SUCCESS or the storage error code.
+ */
+UINT
+boardStorageInit(void)
+{
+   UINT status;
+   ULONG address;
+   lx_nor_flash_initialize();
+   fx_system_initialize();
+   status = fx_media_open(&media, "Xedge flash", _fx_levelx_driver, NULL,
+                          mediaMemory, sizeof(mediaMemory));
+   if(status != FX_SUCCESS)
+   {
+      /* Evaluation firmware: a non-mountable volume is disposable. Only
+       * this data partition may be erased; firmware lies below DISK_OFFSET. */
+      PRINTF("FileX mount %u: formatting data partition 0x60400000..0x607fffff\r\n",
+             status);
+      if(mflash_drv_init() != 0)
+         return FX_IO_ERROR;
+      for(address = DISK_OFFSET; address < DISK_OFFSET + DISK_BYTES;
+          address += MFLASH_SECTOR_SIZE)
+      {
+         if(mflash_drv_sector_erase(address) != 0)
+            return FX_IO_ERROR;
+      }
+      status = fx_media_format(&media, _fx_levelx_driver, NULL,
+         (UCHAR*)mediaMemory, sizeof(mediaMemory), "XEDGE", 2, 128, 0,
+         DISK_BYTES / SECTOR_BYTES - DISK_BYTES / BLOCK_BYTES - 16,
+         SECTOR_BYTES, 8, 1, 1);
+      if(status != FX_SUCCESS)
+         return status;
+      status = fx_media_open(&media, "Xedge flash", _fx_levelx_driver, NULL,
+                             mediaMemory, sizeof(mediaMemory));
+   }
+   if(status == FX_SUCCESS)
+      PRINTF("FILEX_READY physical=4194304 bytes, LevelX wear leveling\r\n");
+   return status;
+}
+
+
+/* Called by the service() ThreadX worker once per second to commit cached
+ * FileX writes. Return the FileX status for CHECK to handle.
+ */
+UINT
+boardStorageFlush(void)
+{
+   return fx_media_flush(&media);
+}
+
+
+/****************************************************************************
+ * BAS / Xedge: platform hooks and Lua event delivery
+ ***************************************************************************/
+
+/* Owned by the common Xedge startup in examples/xedge/src/xedge.c.
+ * ltMgr belongs to the current Lua VM; native workers must not retain it.
+ */
+extern LThreadMgr ltMgr;
+extern void barracuda(void);
+
+/* BAS calls this handler for fatal errors after tx_application_define()
+ * registers it with HttpServer_setErrHnd(). Report the BAS error location
+ * before handing control to the board's non-returning fail() function.
+ */
+static void
+fatal(BaFatalErrorCodes code, unsigned detail, const char* file, int line)
+{
+   PRINTF("BAS fatal %u/%u %s:%u\r\n", code, detail, file, line);
+   fail("BAS", code, line);
+}
+
+
+/* HttpTrace calls this sink when flushing buffered BAS diagnostics.
+ * The buffer has an explicit byte count and need not be NUL-terminated;
+ * send it to the board's debug console without adding line endings.
+ */
+static void
+trace(char* text, int length)
+{
+   while(length-- > 0)
+      DbgConsole_Putchar(*text++);
+}
+
+
+/* LThreadMgr invokes this job on a BAS worker with the server mutex held.
+ * Use the job's Lua coroutine and the manager's error-handler stack index
+ * (msgh) for the protected call. Xedge's _XedgeEvent("sntp") retains the
+ * notification so applications subscribing later also learn that time is set.
+ * The manager clears the Lua stack and frees the job after this callback;
+ * neither job nor job->Lt may be retained.
+ * Details: https://realtimelogic.com/ba/doc/en/C/reference/html/md_en_C_md_LuaBindings.html#AsynchC2Lua
+ */
+static void
+timeEvent(ThreadJob* job, int msgh, LThreadMgr* mgr)
+{
+   lua_State* L = job->Lt;
+   baAssert(ThreadMutex_isOwner(HttpServer_getMutex(mgr->server)));
+   if(HttpServer_getDispatcher(mgr->server)->doExit)
+   {
+      return;
+   }
+   lua_getglobal(L, "_XedgeEvent");
+   lua_pushliteral(L, "sntp");
+   if(lua_pcall(L, 1, 0, msgh) == LUA_OK)
+   {
+      PRINTF("SNTP_EVENT UTC=%u\r\n", (unsigned)baGetUnixTime());
+   }
+   else
+   {
+      HttpTrace_printf(0, "SNTP event: %s\n", lua_tostring(L, -1));
+   }
+}
+
+
+/* ba.timer invokes this C function through Lua once per second, with the
+ * BAS mutex held. The ThreadX time worker only sets timeSynchronized; it
+ * never touches a Lua state or LThreadMgr. Keeping this timer in the current
+ * Lua virtual machine (VM) ties polling to that VM's lifetime, so a debugger
+ * restart cannot leave the native worker with stale Lua/manager pointers.
+ *
+ * Queue a ThreadJob so application event handlers run on a BAS worker, where
+ * they can call blocking bindings without occupying the timer thread.
+ * Returning Lua true repeats the timer, including after allocation failure.
+ * Returning no values stops it and releases its automatic reference. Each
+ * VM queues at most one event; a restarted VM sees the existing time flag.
+ */
+static int
+pollTimeEvent(lua_State* L)
+{
+   ThreadJob* job;
+   if(HttpServer_getDispatcher(ltMgr.server)->doExit)
+   {
+      return 0;
+   }
+   if(timeSynchronized) /* We got time via SNTP */
+   {
+      job = ThreadJob_lcreate(sizeof(ThreadJob), timeEvent);
+      if(job)
+      {
+         LThreadMgr_run(&ltMgr, job);
+         return 0; /* Stop this timer; the manager now owns the job. */
+      }
+   }
+   lua_pushboolean(L, TRUE); /* Retry after one second, including low memory. */
+   return 1;
+}
+
+
+/* Called by callXedgeOpenAUX() in examples/xedge/src/xedge.c after .config
+ * has installed _XedgeEvent, before Xedge starts its applications. The BAS
+ * mutex is held. Register application-specific Lua bindings here.
+ *
+ * With BA_ENABLE_LUA_DEBUGGER=1, a debugger restart makes barracuda() destroy
+ * the old Lua VM and its BAS objects, then create replacements and call this
+ * hook again. The board and ThreadX keep running. Recreate Lua registrations
+ * and this timer on every call; initialize persistent drivers and native
+ * threads in application(), which runs once at boot.
+ * See "Enabling Additional Features" in the standalone Xedge build guide:
+ * https://realtimelogic.com/ba/examples/xedge/readme.html#features
+ * Debugger API: https://realtimelogic.com/ba/doc/en/lua/auxlua.html#dbgmon
+ *
+ * aux is borrowed for this call. Its addSecret callback copies the board's
+ * public silicon ID into softTPM key derivation; the Xedge build supplies
+ * the secret key material. Then install the private time-notification timer.
+ * Return 0 on success or -1 to make Xedge report a fatal startup error.
+ */
+int
+xedgeOpenAUX(XedgeOpenAUX* aux)
+{
+   lua_State* L = aux->L;
+   int status;
+   /* Stable public silicon identity differentiates softTPM derivation; it is
+    * not a secret or a hardware-protected TPM key. Xedge supplies its key. */
+   const U32 uid[] = {OCOTP->CFG0, OCOTP->CFG1};
+   aux->addSecret(aux, TRUE, (const U8*)uid, sizeof(uid));
+
+   lua_getglobal(L, "_XedgeEvent");
+   status = lua_isfunction(L, -1);
+   lua_pop(L, 1);
+   if(!status)
+   {
+      return -1; /* Set by Xedge's Lua startup code */
+   }
+   /* Equivalent Lua, with pollTimeEvent supplied as a C function value:
+    *   local timer = ba.timer(pollTimeEvent)
+    *   timer:set(1000, true)
+    * lua_pushcfunction makes C code callable by Lua; no Lua wrapper is needed.
+    * The true argument retains the timer in the Lua registry after this
+    * function removes it from the stack. It does not make the timer repeat;
+    * pollTimeEvent's return value controls that.
+    * Note: we could have used the timer C API, but this is easier.
+    * C API: https://realtimelogic.com/ba/doc/en/C/reference/html/structBaTimer.html
+    */
+   lua_getglobal(L, "ba");
+   lua_getfield(L, -1, "timer");
+   lua_remove(L, -2);
+   lua_pushcfunction(L, pollTimeEvent);
+   if(lua_pcall(L, 1, 1, 0) != LUA_OK)
+   {
+      lua_pop(L, 1);
+      return -1;
+   }
+   lua_getfield(L, -1, "set");
+   lua_pushvalue(L, -2); /* Explicit self argument for timer:set(). */
+   lua_pushinteger(L, 1000);
+   lua_pushboolean(L, TRUE);
+   status = lua_pcall(L, 3, 1, 0);
+   if(status == LUA_OK && !lua_toboolean(L, -1))
+   {
+      status = -1;
+   }
+   lua_pop(L, 2); /* Result/error and timer; restore the caller's stack. */
+   return status == LUA_OK ? 0 : -1;
+}
+
+
+/* barracuda() in xedge.c calls this hook after constructing DiskIo and
+ * before exposing it to Lua as the "disk" I/O interface. The required io
+ * pointer is borrowed; attach the already opened, board-owned FileX media
+ * and use its root directory. Return 0 on success or the adapter error code.
+ * Xedge recreates DiskIo on a debugger restart; the media stays open.
+ */
+int
+xedgeInitDiskIo(DiskIo* io)
+{
+   int status = ((IoIntf*)io)->propertyFp((IoIntf*)io, "setmedia", &media, NULL);
+   return status ? status : DiskIo_setRootDir(io, "/");
+}
+
+
+/****************************************************************************
+ * ThreadX workers: native time acquisition and FileX maintenance
+ ***************************************************************************/
+
+/* Called only by synchronizeTime(). Make one IPv4 Simple Network Time
+ * Protocol (SNTP) request with native NetX UDP. DNS and receive waits run
+ * outside the BAS mutex; every attempt closes its socket before returning.
+ * On NX_SUCCESS, write UTC Unix seconds to the required unixSeconds pointer;
+ * otherwise leave it unchanged and return a NetX error. This is an initial
+ * clock sample, not an authenticated or periodically corrected time source.
+ */
+static UINT
+fetchTime(U32* unixSeconds)
+{
+   NX_UDP_SOCKET socket;
+   NX_PACKET* packet = NULL;
+   UCHAR data[48] = {27};
+   ULONG server, source, length;
+   UINT port, status, bound = 0;
+   U32 seconds;
+
+   status = nx_dns_host_by_name_get(&dns, (UCHAR*)XEDGE_NTP_SERVER,
+                                    &server, 5 * NX_IP_PERIODIC_RATE);
+   if(status != NX_SUCCESS)
+   {
+      return status;
+   }
+   status = nx_udp_socket_create(&ip, &socket, "time", NX_IP_NORMAL,
+                                 NX_DONT_FRAGMENT, 64, 1);
+   if(status != NX_SUCCESS)
+   {
+      return status;
+   }
+   do
+   {
+      status = nx_udp_socket_bind(&socket, NX_ANY_PORT, NX_NO_WAIT);
+      if(status != NX_SUCCESS)
+      {
+         break;
+      }
+      bound = 1;
+      status = nx_packet_allocate(&pool, &packet, NX_UDP_PACKET, NX_NO_WAIT);
+      if(status != NX_SUCCESS)
+      {
+         break;
+      }
+      status = nx_packet_data_append(packet, data, sizeof(data), &pool,
+                                     NX_NO_WAIT);
+      if(status != NX_SUCCESS)
+      {
+         break;
+      }
+      status = nx_udp_socket_send(&socket, packet, server, XEDGE_NTP_PORT);
+      if(status != NX_SUCCESS)
+      {
+         break;
+      }
+      packet = NULL; /* Successful send transfers ownership to NetX. */
+      status = nx_udp_socket_receive(&socket, &packet, 5 * NX_IP_PERIODIC_RATE);
+      if(status != NX_SUCCESS)
+      {
+         break;
+      }
+      status = NX_INVALID_PACKET;
+      if(packet->nx_packet_length != sizeof(data) ||
+         nx_udp_source_extract(packet, &source, &port) != NX_SUCCESS ||
+         source != server || port != XEDGE_NTP_PORT ||
+         nx_packet_data_extract_offset(packet, 0, data, sizeof(data),
+                                       &length) != NX_SUCCESS ||
+         length != sizeof(data))
+      {
+         break;
+      }
+      /* Server reply, NTP v3/v4, synchronized leap status and stratum 1..15. */
+      if((data[0] & 7) != 4 || (data[0] >> 6) == 3 ||
+         ((data[0] >> 3) & 7) < 3 || ((data[0] >> 3) & 7) > 4 ||
+         data[1] == 0 || data[1] > 15)
+      {
+         break;
+      }
+      seconds = ((U32)data[40] << 24) | ((U32)data[41] << 16) |
+                ((U32)data[42] << 8) | data[43];
+      if(!(seconds | data[44] | data[45] | data[46] | data[47]))
+      {
+         break;
+      }
+      /* Unsigned subtraction handles the 2036 NTP era wrap. BAS's U32
+       * Unix clock ends in 2106; reject dates before 2020 as implausible. */
+      seconds = (U32)(seconds - 2208988800UL);
+      if(seconds < 1577836800UL)
+      {
+         break;
+      }
+      *unixSeconds = seconds;
+      status = NX_SUCCESS;
+   } while(0);
+   if(packet)
+   {
+      CHECK(nx_packet_release(packet));
+   }
+   if(bound)
+   {
+      CHECK(nx_udp_socket_unbind(&socket)); /* Also releases queued replies. */
+   }
+   CHECK(nx_udp_socket_delete(&socket));
+   return status;
+}
+
+
+/* ThreadX starts this worker from application(), after DNS is ready.
+ * Retry SNTP independently of Xedge and storage flushing, then set the BAS
+ * and FileX clocks before publishing timeSynchronized to pollTimeEvent().
+ * The worker does not acquire the BAS mutex or keep Lua/manager pointers.
+ * It returns after the first valid sample; BAS and FileX advance their own
+ * clocks. The ThreadX entry argument is unused.
+ */
+static void
+synchronizeTime(ULONG unused)
+{
+   U32 seconds;
+   UINT status;
+   struct BaTm tm;
+   (void)unused;
+   while((status = fetchTime(&seconds)) != NX_SUCCESS)
+   {
+      PRINTF("SNTP_RETRY status=%u tick=%u\r\n", status, (unsigned)tx_time_get());
+      tx_thread_sleep(NX_IP_PERIODIC_RATE);
+   }
+   baSetUnixTime(seconds);  /* Set in src/arch/ThreadX/ThreadLib.c */
+   baTime2tm(&tm, seconds);
+   CHECK(fx_system_date_set(tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday));
+   CHECK(fx_system_time_set(tm.tm_hour, tm.tm_min, tm.tm_sec));
+   timeSynchronized = 1;
+   PRINTF("SNTP UTC=%u\r\n", (unsigned)seconds);
+}
+
+
+/* ThreadX starts this storage worker from application(). Keeping periodic
+ * flushes in their own thread lets them continue while SNTP waits for a
+ * reply. The ThreadX entry argument is unused.
+ */
+static void
+service(ULONG unused)
+{
+   (void)unused;
+   for(;;)
+   {
+      tx_thread_sleep(NX_IP_PERIODIC_RATE);
+      CHECK(boardStorageFlush());
+   }
+}
+
+
+/****************************************************************************
+ * ThreadX startup and handoff to BAS / Xedge
+ ***************************************************************************/
+
+/* ThreadX runs this entry after tx_application_define() returns. Complete
+ * the board services that may wait, prepare BAS, and enter barracuda(), the
+ * Xedge startup routine in examples/xedge/src/xedge.c. That routine creates
+ * the Lua VM and server, calls the Xedge hooks above, and runs the socket
+ * dispatcher on this thread. The ThreadX entry argument is unused.
+ */
+static void
+application(ULONG unused)
+{
+   ULONG status, address, mask;
+   ULONG dnsServers[4];
+   UINT dnsLength = sizeof(dnsServers), i;
+   uint32_t entropy[12];
+   trng_config_t trng;
+   (void)unused;
+
+   /* BAS setup: provide the heap, fallback UTC clock and trace sink. */
+   init_dlmalloc((char*)heap, (char*)(heap + sizeof(heap) / sizeof(heap[0])));
+   /* Avoid pre-epoch certificate dates until SNTP supplies actual time. */
+   baSetUnixTime(RT1020_BUILD_EPOCH);
+   PRINTF("CLOCK_BUILD_FALLBACK=%u (SNTP pending)\r\n", (unsigned)baGetUnixTime());
+   HttpTrace_setFLushCallback(trace);
+
+   /* Board entropy bridges the NXP random generator to SharkSSL. */
+   TRNG_GetDefaultConfig(&trng);
+   CHECK(TRNG_Init(TRNG, &trng));
+   CHECK(TRNG_GetRandomData(TRNG, entropy, sizeof(entropy)));
+   CHECK(sharkssl_entropyEx((const U8*)entropy, sizeof(entropy)));
+   sharkssl_clear(entropy, sizeof(entropy));
+
+   /* ThreadX services: mount FileX, acquire addresses and configure DNS. */
+   CHECK(boardStorageInit());
+   CHECK(nx_ip_status_check(&ip, NX_IP_LINK_ENABLED, &status, TX_WAIT_FOREVER));
+   /* The driver must supply its MAC before NetX derives the link-local IID.
+    * This NetX API requires prefix 10 when the address pointer is NULL. */
+   CHECK(nxd_ipv6_address_set(&ip, 0, NULL, 10, NULL));
+   CHECK(nx_dhcp_create(&dhcp, &ip, "Xedge RT1020"));
+   /* DHCP's internal pool would be cached SDRAM, invisible to ENET DMA. */
+   CHECK(nx_dhcp_packet_pool_set(&dhcp, &pool));
+   CHECK(nx_dhcp_start(&dhcp));
+   PRINTF("Waiting for Ethernet and DHCP...\r\n");
+   while(nx_ip_status_check(&ip, NX_IP_ADDRESS_RESOLVED, &status,
+                            10 * NX_IP_PERIODIC_RATE) != NX_SUCCESS)
+      PRINTF("Still waiting for DHCP\r\n");
+   CHECK(nx_ip_address_get(&ip, &address, &mask));
+   PRINTF("XEDGE_IPV4=%u.%u.%u.%u\r\n", (unsigned)(address >> 24),
+          (unsigned)((address >> 16) & 255), (unsigned)((address >> 8) & 255),
+          (unsigned)(address & 255));
+   CHECK(nx_dns_create(&dns, &ip, "Xedge DNS"));
+   CHECK(nx_dns_packet_pool_set(&dns, &pool));
+   /* NetX returns this DHCP option as aligned host-order ULONG values. */
+   if(nx_dhcp_user_option_retrieve(&dhcp, NX_DHCP_OPTION_DNS_SVR,
+                                  (UCHAR*)dnsServers, &dnsLength) == NX_SUCCESS)
+   {
+      for(i = 0; i < dnsLength / sizeof(ULONG); ++i)
+      {
+         CHECK(nx_dns_server_add(&dns, dnsServers[i]));
+      }
+   }
+
+   /* BAS borrows this native DNS instance for its hostname lookups. */
+   SoDisp_setDNS(&dns);
+   CHECK(tx_thread_create(&timeThread, "Internet time", synchronizeTime, 0,
+                          timeStack, sizeof(timeStack), 12, 12,
+                          TX_NO_TIME_SLICE, TX_AUTO_START));
+   CHECK(tx_thread_create(&serviceThread, "storage", service, 0,
+                          serviceStack, sizeof(serviceStack), 12, 12,
+                          TX_NO_TIME_SLICE, TX_AUTO_START));
+   /* Allow IPv6 duplicate-address detection before reporting addresses. */
+   tx_thread_sleep(3 * NX_IP_PERIODIC_RATE);
+   for(i = 0; i < NX_MAX_IPV6_ADDRESSES; ++i)
+   {
+      NXD_ADDRESS v6;
+      ULONG prefix;
+      UINT index;
+      if(nxd_ipv6_address_get(&ip, i, &v6, &prefix, &index) == NX_SUCCESS)
+         PRINTF("XEDGE_IPV6=%x:%x:%x:%x:%x:%x:%x:%x prefix=%u\r\n",
+                (unsigned)(v6.nxd_ip_address.v6[0] >> 16),
+                (unsigned)(v6.nxd_ip_address.v6[0] & 65535),
+                (unsigned)(v6.nxd_ip_address.v6[1] >> 16),
+                (unsigned)(v6.nxd_ip_address.v6[1] & 65535),
+                (unsigned)(v6.nxd_ip_address.v6[2] >> 16),
+                (unsigned)(v6.nxd_ip_address.v6[2] & 65535),
+                (unsigned)(v6.nxd_ip_address.v6[3] >> 16),
+                (unsigned)(v6.nxd_ip_address.v6[3] & 65535), (unsigned)prefix);
+   }
+   PRINTF("XEDGE_THREADX_READY heap=25165824 async=1 udp=1 IPv6=1 FileX=1\r\n");
+
+   /* Handoff to BAS/Xedge. A full dispatcher exit halts this example. */
+   barracuda();
+   fail("dispatcher returned", 0, __LINE__);
+}
+
+
+/* ThreadX calls this application hook from tx_kernel_enter(), before
+ * starting scheduled threads. Create NetX services, register them with the
+ * BAS socket adapter, and create the application thread. Defer blocking
+ * DHCP/DNS/storage startup to application(). The supplied unused-memory
+ * pointer is not needed because this example uses static storage.
+ */
+void
+tx_application_define(void* unused)
+{
+   (void)unused;
+   HttpServer_setErrHnd(fatal);
+   nx_system_initialize();
+   CHECK(nx_packet_pool_create(&pool, "network packets", 1536,
+                               packets, sizeof(packets)));
+   CHECK(nx_packet_pool_create(&sendPool, "BAS sends", 1536,
+                               sendPackets, sizeof(sendPackets)));
+   CHECK(nx_ip_create(&ip, "RT1020 Ethernet", 0, 0, &pool, nx_link_driver,
+                      ipStack, sizeof(ipStack), 2));
+   CHECK(nx_arp_enable(&ip, arp, sizeof(arp)));
+   CHECK(nx_tcp_enable(&ip));
+   CHECK(nx_udp_enable(&ip));
+   CHECK(nx_icmp_enable(&ip));
+   CHECK(nxd_ipv6_enable(&ip));
+   CHECK(nxd_icmp_enable(&ip));
+
+   /* BAS/NetX boundary: register the persistent interface list and a
+    * separate send pool to preserve receive capacity during BAS sends.
+    * The final argument is the TCP receive-window size in bytes.
+    */
+   SoDisp_nxInit(interfaces, &sendPool, 65535);
+   /* BAS timers and Lua workers use priority 16. Let them preempt a busy
+    * dispatcher so timer catch-up cannot expire a newly scheduled read.
+    * Lower ThreadX priority numbers run first.
+    */
+   CHECK(tx_thread_create(&appThread, "Xedge", application, 0,
+                          appStack, sizeof(appStack), 17, 17,
+                          TX_NO_TIME_SLICE, TX_AUTO_START));
+}
+
+
+/* The NXP C runtime enters here after its boot setup has initialized
+ * SDRAM. Configure the board and Ethernet PHY, then enter ThreadX, which
+ * calls _tx_initialize_low_level() and tx_application_define(). Lua starts
+ * later, when the application thread calls barracuda().
+ */
+int
+main(void)
+{
+   const clock_enet_pll_config_t enetClock = {true, false, false, 1};
+   gpio_pin_config_t gpio = {kGPIO_DigitalOutput, 0, kGPIO_NoIntmode};
+   BOARD_ConfigMPU();
+   BOARD_InitBootPins();
+   BOARD_InitBootClocks();
+   BOARD_InitDebugConsole();
+   CLOCK_InitEnetPll(&enetClock);
+   IOMUXC_EnableMode(IOMUXC_GPR, kIOMUXC_GPR_ENET1TxClkOutputDir, true);
+   GPIO_PinInit(GPIO1, 4, &gpio);
+   GPIO_PinInit(GPIO1, 22, &gpio);
+   GPIO_WritePinOutput(GPIO1, 22, 1);
+   GPIO_WritePinOutput(GPIO1, 4, 0);
+   SDK_DelayAtLeastUs(10000, SystemCoreClock);
+   GPIO_WritePinOutput(GPIO1, 4, 1);
+   PRINTF("\r\nXedge RT1020 / Eclipse ThreadX-NetX Duo 6.5.2 / CPU=%u\r\n",
+          SystemCoreClock);
+   tx_kernel_enter();
+   return 0;
+}
+
+
+/****************************************************************************
+ * ThreadX / Cortex-M7: kernel startup and interrupt entry points
+ ***************************************************************************/
+
+extern VOID* _tx_initialize_unused_memory;
+extern VOID _tx_timer_interrupt(VOID);
+extern unsigned char __end__[];
+
+/* ThreadX calls this Cortex-M7 port hook during tx_kernel_enter(), before
+ * tx_application_define(). Supply the linker's first unused RAM address,
+ * enable the cycle counter, and configure the kernel tick and exception
+ * priorities. ThreadX enables interrupts when it starts scheduling.
+ */
+VOID
+_tx_initialize_low_level(VOID)
+{
+   __disable_irq();
+   _tx_initialize_unused_memory = __end__;
+   CoreDebug->DEMCR |= CoreDebug_DEMCR_TRCENA_Msk;
+   DWT->CYCCNT = 0;
+   DWT->CTRL |= DWT_CTRL_CYCCNTENA_Msk;
+   /* ThreadX owns PendSV and SysTick; CMSIS takes unshifted priorities. */
+   NVIC_SetPriority(SVCall_IRQn, 15);
+   NVIC_SetPriority(PendSV_IRQn, 15);
+   SysTick->CTRL = 0;
+   SysTick->LOAD = SystemCoreClock / TX_TIMER_TICKS_PER_SECOND - 1;
+   SysTick->VAL = 0;
+   NVIC_SetPriority(SysTick_IRQn, 4);
+   SysTick->CTRL = SysTick_CTRL_CLKSOURCE_Msk | SysTick_CTRL_TICKINT_Msk |
+                   SysTick_CTRL_ENABLE_Msk;
+}
+
+
+/* The NXP vector table routes each SysTick interrupt here. Hand the tick
+ * to ThreadX for scheduling and timer accounting; this interrupt handler
+ * must not call BAS or Lua code.
+ */
+void
+SysTick_Handler(void)
+{
+   _tx_timer_interrupt();
+}

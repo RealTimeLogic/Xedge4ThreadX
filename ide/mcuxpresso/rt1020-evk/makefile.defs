@@ -1,0 +1,2 @@
+# A response file avoids the Windows command-line length limit.
+USER_OBJS := objects.list

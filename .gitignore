@@ -1,0 +1,13 @@
+/build*/
+/.deps/
+/.venv/
+/dist/
+/tests/
+__pycache__/
+*.pyc
+/.metadata/
+/ide/mcuxpresso/rt1020-evk/Release/
+/ide/mcuxpresso/rt1020-evk/Debug/
+/ide/mcuxpresso/rt1020-evk/.settings/language.settings.xml
+/ide/mcuxpresso/rt1020-evk/*.launch
+!/ide/mcuxpresso/rt1020-evk/Xedge_RT1020 Debug.launch

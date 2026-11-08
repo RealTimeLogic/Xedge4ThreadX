@@ -1,0 +1,6 @@
+{
+  "examples/evkmimxrt1020/azure_rtos_examples/filex_levelx_mflash/armgcc/MIMXRT1021xxxxx_flexspi_nor.ld": "505f8295368b2dc09803432715a64bed472d610d29675e344248e9132e40fdf6",
+  "examples/evkmimxrt1020/azure_rtos_examples/filex_levelx_mflash/lx_mflash_driver.c": "8130898c774f833d5c3b9f1fb8a916c9a981714e904b0a2f8c0e0e459b00dbf7",
+  "nxp-rtos/ports/netxduo/nx_driver_imxrt.c": "8b54d3be3ecf8622c213fbb001afd4d593baa72238494d37dbb14357011d2be1",
+  "nxp-rtos/ports/netxduo/nx_driver_imxrt.h": "512581cf0973b4f95da6da896bc1bdc1e83de13f99cadf5d72ba20952e8d4b66"
+}

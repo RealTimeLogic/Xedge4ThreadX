@@ -1,0 +1,83 @@
+{
+  "sdk": {
+    "repo": "nxp-mcuxpresso/mcuxsdk-core",
+    "commit": "c6f4223f45fdab59509f25ee3ea63a71bd29d8aa",
+    "paths": [
+      "drivers/",
+      "LICENSE",
+      "COPYING"
+    ],
+    "sha256": "9b31d499a197e4c7da90190e55ec9bf0cbf3130c24fecd5b9536a0fb79046b96"
+  },
+  "devices": {
+    "repo": "nxp-mcuxpresso/mcux-devices-rt",
+    "commit": "f7b174ef993614aaa3a23b3ca77a996c2211994c",
+    "paths": [
+      "RT1020/",
+      "RT1050/MIMXRT1052/xip/",
+      "LICENSE",
+      "COPYING"
+    ],
+    "sha256": "fe5220ffaab204b53ff2621d1897d3dc12847320be375f60230effef8a384e76"
+  },
+  "components": {
+    "repo": "nxp-mcuxpresso/mcux-component",
+    "commit": "12153a553bd811341fb5d9744e8dc33d32e89cfc",
+    "sha256": "9ef4e24c4662cd6adfed46cb434490f418b6e4553854f772d1d0740b4c346407"
+  },
+  "board-examples": {
+    "repo": "nxp-mcuxpresso/mcuxsdk-examples",
+    "commit": "3151bc057b8924db54c7395d39b213c05ab94dc3",
+    "paths": [
+      "_boards/evkmimxrt1020/",
+      "LICENSE",
+      "COPYING"
+    ],
+    "sha256": "d6a347ad16608c38b3b91d8aa3942c87b24bbd8491e7fe2ddbae2455579686e6"
+  },
+  "cmsis": {
+    "repo": "nxp-mcuxpresso/mcu-sdk-cmsis",
+    "commit": "dd88dfb6c36140c3f48a0aa545d386deae29e6c7",
+    "paths": [
+      "Core/",
+      "LICENSE",
+      "COPYING"
+    ],
+    "sha256": "4e328e1b9ece0d7341ddedffe36da340cc124d73811028352506b46c0689b620"
+  },
+  "examples": {
+    "repo": "nxp-mcuxpresso/legacy-mcux-sdk-examples",
+    "commit": "52b428258efda7d5bd8a2ace2195ca828356743a",
+    "paths": [
+      "evkmimxrt1020/azure_rtos_examples/",
+      "LICENSE",
+      "COPYING"
+    ],
+    "sha256": "e2410e283c28261c8c1fc643ab0e0760a5ff97a8a9cb51a65206553a3e4d02e2"
+  },
+  "nxp-rtos": {
+    "repo": "NXP/azure-rtos",
+    "commit": "7348f5d379ea0adaf363a3d6ab234ebcf84eb7f0",
+    "sha256": "1ea72b63a13550b7f0c558763f5ec5690914aff8989965dfa5955a158c7de8f6"
+  },
+  "filex": {
+    "repo": "eclipse-threadx/filex",
+    "commit": "cdc7a593d0555cdfcfb6181341daad2df1524b23",
+    "sha256": "d8002f4c00d100307f65f7f96d5795d94abb6f8e2293e540dbee1bcce0600cc5"
+  },
+  "levelx": {
+    "repo": "eclipse-threadx/levelx",
+    "commit": "d00483d4d457550704fe136595ea133715c93f9f",
+    "sha256": "8c431c8727d566ecae4aab91201ba7a07ccfb443aaf678ee5ae06bfe4ead461a"
+  },
+  "threadx": {
+    "repo": "eclipse-threadx/threadx",
+    "commit": "b2868c3d2849aab95d04cedcf8885d3f81798c86",
+    "sha256": "35b9241fb357950c591d13fcfb96aba6b619a51da179bde7f0f04299322d5d17"
+  },
+  "netxduo": {
+    "repo": "eclipse-threadx/netxduo",
+    "commit": "c690f59f9a5195c465153e90ef56b865337a8a62",
+    "sha256": "86162a30d94dc697457fd61f3b3e4c841c67cb16fed65825cc8557ff43523184"
+  }
+}

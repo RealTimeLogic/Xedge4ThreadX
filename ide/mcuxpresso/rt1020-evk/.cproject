@@ -1,0 +1,386 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?fileVersion 4.0.0?>
+<cproject storage_type_id="org.eclipse.cdt.core.XmlProjectDescriptionStorage">
+  <storageModule moduleId="org.eclipse.cdt.core.settings">
+    <cconfiguration id="com.crt.advproject.config.exe.debug.xedge">
+      <storageModule buildSystemId="org.eclipse.cdt.managedbuilder.core.configurationDataProvider" id="com.crt.advproject.config.exe.debug.xedge" moduleId="org.eclipse.cdt.core.settings" name="Debug">
+        <externalSettings />
+        <extensions>
+          <extension id="org.eclipse.cdt.core.ELF" point="org.eclipse.cdt.core.BinaryParser" />
+          <extension id="org.eclipse.cdt.core.GNU_ELF" point="org.eclipse.cdt.core.BinaryParser" />
+        </extensions>
+      </storageModule>
+      <storageModule moduleId="cdtBuildSystem" version="4.0.0">
+        <configuration id="com.crt.advproject.config.exe.debug.xedge" name="Debug" parent="com.crt.advproject.config.exe.debug" artifactName="xedge" artifactExtension="elf" cleanCommand="rm -rf" buildProperties="org.eclipse.cdt.build.core.buildArtefactType=org.eclipse.cdt.build.core.buildArtefactType.exe" buildArtefactType="org.eclipse.cdt.build.core.buildArtefactType.exe" prebuildStep="echo Generated inputs ready" postbuildStep="echo Firmware outputs ready">
+          <folderInfo id="com.crt.advproject.config.exe.debug.xedge.root" name="/" resourcePath="">
+            <toolChain id="xedge.tc.root" name="NXP MCU Tools" superClass="com.crt.advproject.toolchain.exe.debug" targetTool="xedge.link">
+              <targetPlatform id="xedge.platform" superClass="com.crt.advproject.platform.exe.debug" binaryParser="org.eclipse.cdt.core.ELF;org.eclipse.cdt.core.GNU_ELF" />
+              <builder id="xedge.builder" superClass="com.crt.advproject.builder.exe.debug" name="Gnu Make Builder" buildPath="${workspace_loc:/Xedge_RT1020}/Debug" managedBuildOn="true" parallelBuildOn="true" parallelizationNumber="8" keepEnvironmentInBuildfile="false" arguments="-r -j8 --output-sync=target" />
+              <tool id="xedge.link" name="MCU Linker" superClass="com.crt.advproject.link.exe.debug" command="python" commandLinePattern="${COMMAND} &quot;${ProjDirPath}/../../../tools/ide_link.py&quot; -mcpu=cortex-m7 -mthumb -mfpu=fpv5-d16 -mfloat-abi=hard --specs=nosys.specs -T &quot;./boards/rt1020-evk/generated/rt1020.ld&quot; -Wl,-Map=xedge.map,--gc-sections,--print-memory-usage -o &quot;${OUTPUT}&quot; @objects.list">
+                <option id="xedge.link.manage" superClass="com.crt.advproject.link.manage" value="false" valueType="boolean" />
+                <outputType id="xedge.link.output" superClass="cdt.managedbuild.tool.gnu.c.linker.output" outputs="elf" />
+                <inputType id="xedge.link.input" superClass="cdt.managedbuild.tool.gnu.c.linker.input">
+                  <additionalInput kind="additionalinputdependency" paths="$(USER_OBJS)" />
+                </inputType>
+              </tool>
+            </toolChain>
+          </folderInfo>
+          <folderInfo id="com.crt.advproject.config.exe.debug.xedge.Application" name="Application" resourcePath="Application">
+            <toolChain id="xedge.tc.Application" name="NXP MCU Tools" superClass="com.crt.advproject.toolchain.exe.debug">
+              <tool id="xedge.Application" name="MCU C Compiler" superClass="com.crt.advproject.gcc.exe.debug" command="arm-none-eabi-gcc" commandLinePattern="${COMMAND} -DCPU_MIMXRT1021DAG5A -DFX_INCLUDE_USER_DEFINE_FILE -DLX_INCLUDE_USER_DEFINE_FILE -DLX_USE_MFLASH -DNX_INCLUDE_USER_DEFINE_FILE -DSDK_DEBUGCONSOLE=1 -DSDK_DEBUGCONSOLE_UART=1 -DSERIAL_PORT_TYPE_UART=1 -DSKIP_SYSCLK_INIT -DTX_INCLUDE_USER_DEFINE_FILE -DXIP_BOOT_HEADER_DCD_ENABLE=1 -DXIP_BOOT_HEADER_ENABLE=1 -DXIP_EXTERNAL_FLASH=1 -D__STARTUP_CLEAR_BSS -D__STARTUP_INITIALIZE_NONCACHEDATA &quot;-I${ProjDirPath}/../../../boards/rt1020-evk/config&quot; &quot;-I${ProjDirPath}/../../../BAS/inc/arch/ThreadX&quot; &quot;-I${ProjDirPath}/../../../BAS/inc&quot; &quot;-I${ProjDirPath}/../../../BAS/examples/xedge/src&quot; &quot;-I${ProjDirPath}/../../../.deps/devices/RT1020/MIMXRT1021&quot; &quot;-I${ProjDirPath}/../../../.deps/devices/RT1020/MIMXRT1021/drivers&quot; &quot;-I${ProjDirPath}/../../../.deps/devices/RT1050/MIMXRT1052/xip&quot; &quot;-I${ProjDirPath}/../../../.deps/cmsis/Core/Include&quot; &quot;-I${ProjDirPath}/../../../.deps/board-examples/_boards/evkmimxrt1020&quot; &quot;-I${ProjDirPath}/../../../.deps/board-examples/_boards/evkmimxrt1020/xip&quot; &quot;-I${ProjDirPath}/../../../.deps/board-examples/_boards/evkmimxrt1020/common/clock&quot; &quot;-I${ProjDirPath}/../../../.deps/board-examples/_boards/evkmimxrt1020/driver_examples/enet/txrx_transfer&quot; &quot;-I${ProjDirPath}/../../../.deps/devices/RT1020/periph&quot; &quot;-I${ProjDirPath}/../../../.deps/examples/evkmimxrt1020/azure_rtos_examples/filex_levelx_mflash&quot; &quot;-I${ProjDirPath}/../../../.deps/sdk/drivers/common&quot; &quot;-I${ProjDirPath}/../../../.deps/sdk/drivers/igpio&quot; &quot;-I${ProjDirPath}/../../../.deps/sdk/drivers/lpuart&quot; &quot;-I${ProjDirPath}/../../../.deps/sdk/drivers/enet&quot; &quot;-I${ProjDirPath}/../../../.deps/sdk/drivers/trng&quot; &quot;-I${ProjDirPath}/../../../.deps/sdk/drivers/flexspi&quot; &quot;-I${ProjDirPath}/../../../.deps/sdk/drivers/cache/armv7-m7&quot; &quot;-I${ProjDirPath}/../../../.deps/components/phy&quot; &quot;-I${ProjDirPath}/../../../.deps/components/phy/device/phyksz8081&quot; &quot;-I${ProjDirPath}/../../../.deps/components/uart&quot; &quot;-I${ProjDirPath}/../../../.deps/components/serial_manager&quot; &quot;-I${ProjDirPath}/../../../.deps/components/lists&quot; &quot;-I${ProjDirPath}/../../../.deps/components/assert&quot; &quot;-I${ProjDirPath}/../../../.deps/components/str&quot; &quot;-I${ProjDirPath}/../../../.deps/components/debug_console_lite&quot; &quot;-I${ProjDirPath}/../../../.deps/components/flash/mflash&quot; &quot;-I${ProjDirPath}/../../../.deps/components/flash/mflash/mimxrt1021&quot; &quot;-I${ProjDirPath}/../../../.deps/nxp-rtos/ports/netxduo&quot; &quot;-I${ProjDirPath}/../../../.deps/netxduo/ports/cortex_m7/gnu/inc&quot; &quot;-I${ProjDirPath}/../../../.deps/netxduo/common/inc&quot; &quot;-I${ProjDirPath}/../../../.deps/netxduo/addons/auto_ip&quot; &quot;-I${ProjDirPath}/../../../.deps/netxduo/addons/azure_iot&quot; &quot;-I${ProjDirPath}/../../../.deps/netxduo/addons/BSD&quot; &quot;-I${ProjDirPath}/../../../.deps/netxduo/addons/cloud&quot; &quot;-I${ProjDirPath}/../../../.deps/netxduo/addons/dhcp&quot; &quot;-I${ProjDirPath}/../../../.deps/netxduo/addons/dns&quot; &quot;-I${ProjDirPath}/../../../.deps/netxduo/addons/ftp&quot; &quot;-I${ProjDirPath}/../../../.deps/netxduo/addons/http&quot; &quot;-I${ProjDirPath}/../../../.deps/netxduo/addons/mdns&quot; &quot;-I${ProjDirPath}/../../../.deps/netxduo/addons/mqtt&quot; &quot;-I${ProjDirPath}/../../../.deps/netxduo/addons/nat&quot; &quot;-I${ProjDirPath}/../../../.deps/netxduo/addons/pop3&quot; &quot;-I${ProjDirPath}/../../../.deps/netxduo/addons/ppp&quot; &quot;-I${ProjDirPath}/../../../.deps/netxduo/addons/pppoe&quot; &quot;-I${ProjDirPath}/../../../.deps/netxduo/addons/ptp&quot; &quot;-I${ProjDirPath}/../../../.deps/netxduo/addons/smtp&quot; &quot;-I${ProjDirPath}/../../../.deps/netxduo/addons/snmp&quot; &quot;-I${ProjDirPath}/../../../.deps/netxduo/addons/sntp&quot; &quot;-I${ProjDirPath}/../../../.deps/netxduo/addons/telnet&quot; &quot;-I${ProjDirPath}/../../../.deps/netxduo/addons/tftp&quot; &quot;-I${ProjDirPath}/../../../.deps/netxduo/addons/web&quot; &quot;-I${ProjDirPath}/../../../.deps/netxduo/addons/websocket&quot; &quot;-I${ProjDirPath}/../../../.deps/netxduo/addons/rtp&quot; &quot;-I${ProjDirPath}/../../../.deps/netxduo/addons/rtsp&quot; &quot;-I${ProjDirPath}/../../../.deps/netxduo/crypto_libraries/inc&quot; &quot;-I${ProjDirPath}/../../../.deps/netxduo/nx_secure/inc&quot; &quot;-I${ProjDirPath}/../../../.deps/netxduo/nx_secure/ports&quot; &quot;-I${ProjDirPath}/../../../.deps/netxduo/tsn/inc&quot; -I./boards/rt1020-evk/netxduo/custom_inc &quot;-I${ProjDirPath}/../../../.deps/levelx/common/inc&quot; -I./boards/rt1020-evk/levelx/custom_inc &quot;-I${ProjDirPath}/../../../.deps/filex/ports/cortex_m7/gnu/inc&quot; &quot;-I${ProjDirPath}/../../../.deps/filex/common/inc&quot; -I./boards/rt1020-evk/filex/custom_inc -isystem &quot;${ProjDirPath}/../../../.deps/threadx/ports/cortex_m7/gnu/inc&quot; -isystem &quot;${ProjDirPath}/../../../.deps/threadx/common/inc&quot; -isystem ./boards/rt1020-evk/threadx/custom_inc -mcpu=cortex-m7 -mthumb -mfpu=fpv5-d16 -mfloat-abi=hard -ffunction-sections -fdata-sections -fno-common -UNDEBUG &quot;-ffile-prefix-map=$(realpath ../../../..)=.&quot; &quot;-ffile-prefix-map=$(realpath ../../../../.deps)=deps&quot; &quot;-ffile-prefix-map=$(CURDIR)=build&quot; -Og -g3 -MMD -MP -MF &quot;$(@:%.c.obj=%.d)&quot; -MT &quot;$@&quot; -o ${OUTPUT} -c ${INPUTS}">
+                <inputType id="xedge.input.Application" superClass="com.crt.advproject.compiler.input" />
+                <outputType id="xedge.output.Application" superClass="cdt.managedbuild.tool.gnu.c.compiler.output" outputs="c.obj" buildVariable="OBJS" />
+                <option id="xedge.includes.Application" superClass="gnu.c.compiler.option.include.paths" valueType="includePath">
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../boards/rt1020-evk/config" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../BAS/inc/arch/ThreadX" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../BAS/inc" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../BAS/examples/xedge/src" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/devices/RT1020/MIMXRT1021" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/devices/RT1020/MIMXRT1021/drivers" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/devices/RT1050/MIMXRT1052/xip" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/cmsis/Core/Include" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/board-examples/_boards/evkmimxrt1020" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/board-examples/_boards/evkmimxrt1020/xip" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/board-examples/_boards/evkmimxrt1020/common/clock" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/board-examples/_boards/evkmimxrt1020/driver_examples/enet/txrx_transfer" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/devices/RT1020/periph" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/examples/evkmimxrt1020/azure_rtos_examples/filex_levelx_mflash" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/sdk/drivers/common" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/sdk/drivers/igpio" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/sdk/drivers/lpuart" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/sdk/drivers/enet" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/sdk/drivers/trng" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/sdk/drivers/flexspi" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/sdk/drivers/cache/armv7-m7" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/components/phy" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/components/phy/device/phyksz8081" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/components/uart" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/components/serial_manager" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/components/lists" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/components/assert" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/components/str" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/components/debug_console_lite" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/components/flash/mflash" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/components/flash/mflash/mimxrt1021" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/nxp-rtos/ports/netxduo" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/netxduo/ports/cortex_m7/gnu/inc" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/netxduo/common/inc" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/netxduo/addons/auto_ip" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/netxduo/addons/azure_iot" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/netxduo/addons/BSD" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/netxduo/addons/cloud" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/netxduo/addons/dhcp" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/netxduo/addons/dns" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/netxduo/addons/ftp" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/netxduo/addons/http" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/netxduo/addons/mdns" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/netxduo/addons/mqtt" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/netxduo/addons/nat" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/netxduo/addons/pop3" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/netxduo/addons/ppp" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/netxduo/addons/pppoe" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/netxduo/addons/ptp" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/netxduo/addons/smtp" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/netxduo/addons/snmp" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/netxduo/addons/sntp" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/netxduo/addons/telnet" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/netxduo/addons/tftp" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/netxduo/addons/web" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/netxduo/addons/websocket" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/netxduo/addons/rtp" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/netxduo/addons/rtsp" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/netxduo/crypto_libraries/inc" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/netxduo/nx_secure/inc" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/netxduo/nx_secure/ports" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/netxduo/tsn/inc" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/Debug/boards/rt1020-evk/netxduo/custom_inc" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/levelx/common/inc" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/Debug/boards/rt1020-evk/levelx/custom_inc" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/filex/ports/cortex_m7/gnu/inc" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/filex/common/inc" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/Debug/boards/rt1020-evk/filex/custom_inc" />
+                </option>
+              </tool>
+            </toolChain>
+          </folderInfo>
+          <folderInfo id="com.crt.advproject.config.exe.debug.xedge.Application_Assembly" name="Application_Assembly" resourcePath="Application_Assembly">
+            <toolChain id="xedge.tc.Application_Assembly" name="NXP MCU Tools" superClass="com.crt.advproject.toolchain.exe.debug">
+              <tool id="xedge.Application_Assembly" name="MCU Assembler" superClass="com.crt.advproject.gas.exe.debug" command="arm-none-eabi-gcc" commandLinePattern="${COMMAND} -DCPU_MIMXRT1021DAG5A -DFX_INCLUDE_USER_DEFINE_FILE -DLX_INCLUDE_USER_DEFINE_FILE -DLX_USE_MFLASH -DNX_INCLUDE_USER_DEFINE_FILE -DSDK_DEBUGCONSOLE=1 -DSDK_DEBUGCONSOLE_UART=1 -DSERIAL_PORT_TYPE_UART=1 -DSKIP_SYSCLK_INIT -DTX_INCLUDE_USER_DEFINE_FILE -DXIP_BOOT_HEADER_DCD_ENABLE=1 -DXIP_BOOT_HEADER_ENABLE=1 -DXIP_EXTERNAL_FLASH=1 -D__STARTUP_CLEAR_BSS -D__STARTUP_INITIALIZE_NONCACHEDATA &quot;-I${ProjDirPath}/../../../boards/rt1020-evk/config&quot; &quot;-I${ProjDirPath}/../../../BAS/inc/arch/ThreadX&quot; &quot;-I${ProjDirPath}/../../../BAS/inc&quot; &quot;-I${ProjDirPath}/../../../BAS/examples/xedge/src&quot; &quot;-I${ProjDirPath}/../../../.deps/devices/RT1020/MIMXRT1021&quot; &quot;-I${ProjDirPath}/../../../.deps/devices/RT1020/MIMXRT1021/drivers&quot; &quot;-I${ProjDirPath}/../../../.deps/devices/RT1050/MIMXRT1052/xip&quot; &quot;-I${ProjDirPath}/../../../.deps/cmsis/Core/Include&quot; &quot;-I${ProjDirPath}/../../../.deps/board-examples/_boards/evkmimxrt1020&quot; &quot;-I${ProjDirPath}/../../../.deps/board-examples/_boards/evkmimxrt1020/xip&quot; &quot;-I${ProjDirPath}/../../../.deps/board-examples/_boards/evkmimxrt1020/common/clock&quot; &quot;-I${ProjDirPath}/../../../.deps/board-examples/_boards/evkmimxrt1020/driver_examples/enet/txrx_transfer&quot; &quot;-I${ProjDirPath}/../../../.deps/devices/RT1020/periph&quot; &quot;-I${ProjDirPath}/../../../.deps/examples/evkmimxrt1020/azure_rtos_examples/filex_levelx_mflash&quot; &quot;-I${ProjDirPath}/../../../.deps/sdk/drivers/common&quot; &quot;-I${ProjDirPath}/../../../.deps/sdk/drivers/igpio&quot; &quot;-I${ProjDirPath}/../../../.deps/sdk/drivers/lpuart&quot; &quot;-I${ProjDirPath}/../../../.deps/sdk/drivers/enet&quot; &quot;-I${ProjDirPath}/../../../.deps/sdk/drivers/trng&quot; &quot;-I${ProjDirPath}/../../../.deps/sdk/drivers/flexspi&quot; &quot;-I${ProjDirPath}/../../../.deps/sdk/drivers/cache/armv7-m7&quot; &quot;-I${ProjDirPath}/../../../.deps/components/phy&quot; &quot;-I${ProjDirPath}/../../../.deps/components/phy/device/phyksz8081&quot; &quot;-I${ProjDirPath}/../../../.deps/components/uart&quot; &quot;-I${ProjDirPath}/../../../.deps/components/serial_manager&quot; &quot;-I${ProjDirPath}/../../../.deps/components/lists&quot; &quot;-I${ProjDirPath}/../../../.deps/components/assert&quot; &quot;-I${ProjDirPath}/../../../.deps/components/str&quot; &quot;-I${ProjDirPath}/../../../.deps/components/debug_console_lite&quot; &quot;-I${ProjDirPath}/../../../.deps/components/flash/mflash&quot; &quot;-I${ProjDirPath}/../../../.deps/components/flash/mflash/mimxrt1021&quot; &quot;-I${ProjDirPath}/../../../.deps/nxp-rtos/ports/netxduo&quot; &quot;-I${ProjDirPath}/../../../.deps/netxduo/ports/cortex_m7/gnu/inc&quot; &quot;-I${ProjDirPath}/../../../.deps/netxduo/common/inc&quot; &quot;-I${ProjDirPath}/../../../.deps/netxduo/addons/auto_ip&quot; &quot;-I${ProjDirPath}/../../../.deps/netxduo/addons/azure_iot&quot; &quot;-I${ProjDirPath}/../../../.deps/netxduo/addons/BSD&quot; &quot;-I${ProjDirPath}/../../../.deps/netxduo/addons/cloud&quot; &quot;-I${ProjDirPath}/../../../.deps/netxduo/addons/dhcp&quot; &quot;-I${ProjDirPath}/../../../.deps/netxduo/addons/dns&quot; &quot;-I${ProjDirPath}/../../../.deps/netxduo/addons/ftp&quot; &quot;-I${ProjDirPath}/../../../.deps/netxduo/addons/http&quot; &quot;-I${ProjDirPath}/../../../.deps/netxduo/addons/mdns&quot; &quot;-I${ProjDirPath}/../../../.deps/netxduo/addons/mqtt&quot; &quot;-I${ProjDirPath}/../../../.deps/netxduo/addons/nat&quot; &quot;-I${ProjDirPath}/../../../.deps/netxduo/addons/pop3&quot; &quot;-I${ProjDirPath}/../../../.deps/netxduo/addons/ppp&quot; &quot;-I${ProjDirPath}/../../../.deps/netxduo/addons/pppoe&quot; &quot;-I${ProjDirPath}/../../../.deps/netxduo/addons/ptp&quot; &quot;-I${ProjDirPath}/../../../.deps/netxduo/addons/smtp&quot; &quot;-I${ProjDirPath}/../../../.deps/netxduo/addons/snmp&quot; &quot;-I${ProjDirPath}/../../../.deps/netxduo/addons/sntp&quot; &quot;-I${ProjDirPath}/../../../.deps/netxduo/addons/telnet&quot; &quot;-I${ProjDirPath}/../../../.deps/netxduo/addons/tftp&quot; &quot;-I${ProjDirPath}/../../../.deps/netxduo/addons/web&quot; &quot;-I${ProjDirPath}/../../../.deps/netxduo/addons/websocket&quot; &quot;-I${ProjDirPath}/../../../.deps/netxduo/addons/rtp&quot; &quot;-I${ProjDirPath}/../../../.deps/netxduo/addons/rtsp&quot; &quot;-I${ProjDirPath}/../../../.deps/netxduo/crypto_libraries/inc&quot; &quot;-I${ProjDirPath}/../../../.deps/netxduo/nx_secure/inc&quot; &quot;-I${ProjDirPath}/../../../.deps/netxduo/nx_secure/ports&quot; &quot;-I${ProjDirPath}/../../../.deps/netxduo/tsn/inc&quot; -I./boards/rt1020-evk/netxduo/custom_inc &quot;-I${ProjDirPath}/../../../.deps/levelx/common/inc&quot; -I./boards/rt1020-evk/levelx/custom_inc &quot;-I${ProjDirPath}/../../../.deps/filex/ports/cortex_m7/gnu/inc&quot; &quot;-I${ProjDirPath}/../../../.deps/filex/common/inc&quot; -I./boards/rt1020-evk/filex/custom_inc -isystem &quot;${ProjDirPath}/../../../.deps/threadx/ports/cortex_m7/gnu/inc&quot; -isystem &quot;${ProjDirPath}/../../../.deps/threadx/common/inc&quot; -isystem ./boards/rt1020-evk/threadx/custom_inc -mcpu=cortex-m7 -mthumb -mfpu=fpv5-d16 -mfloat-abi=hard -ffunction-sections -fdata-sections -fno-common -UNDEBUG &quot;-ffile-prefix-map=$(realpath ../../../..)=.&quot; &quot;-ffile-prefix-map=$(realpath ../../../../.deps)=deps&quot; &quot;-ffile-prefix-map=$(CURDIR)=build&quot; -Og -g3 -MMD -MP -MF &quot;$(@:%.S.obj=%.d)&quot; -MT &quot;$@&quot; -o ${OUTPUT} -c ${INPUTS}">
+                <inputType id="xedge.input.Application_Assembly" superClass="com.crt.advproject.assembler.input" />
+                <outputType id="xedge.output.Application_Assembly" superClass="cdt.managedbuild.tool.gnu.assembler.output" outputs="S.obj" buildVariable="OBJS" />
+              </tool>
+            </toolChain>
+          </folderInfo>
+          <folderInfo id="com.crt.advproject.config.exe.debug.xedge.Application_Startup" name="Application_Startup" resourcePath="Application_Startup">
+            <toolChain id="xedge.tc.Application_Startup" name="NXP MCU Tools" superClass="com.crt.advproject.toolchain.exe.debug">
+              <tool id="xedge.Application_Startup" name="MCU C Compiler" superClass="com.crt.advproject.gcc.exe.debug" command="arm-none-eabi-gcc" commandLinePattern="${COMMAND} -DCPU_MIMXRT1021DAG5A -DFX_INCLUDE_USER_DEFINE_FILE -DLX_INCLUDE_USER_DEFINE_FILE -DLX_USE_MFLASH -DNX_INCLUDE_USER_DEFINE_FILE -DSDK_DEBUGCONSOLE=1 -DSDK_DEBUGCONSOLE_UART=1 -DSERIAL_PORT_TYPE_UART=1 -DSKIP_SYSCLK_INIT -DTX_INCLUDE_USER_DEFINE_FILE -DXIP_BOOT_HEADER_DCD_ENABLE=1 -DXIP_BOOT_HEADER_ENABLE=1 -DXIP_EXTERNAL_FLASH=1 -D__STARTUP_CLEAR_BSS -D__STARTUP_INITIALIZE_NONCACHEDATA -include ./build_epoch.h &quot;-I${ProjDirPath}/../../../boards/rt1020-evk/config&quot; &quot;-I${ProjDirPath}/../../../BAS/inc/arch/ThreadX&quot; &quot;-I${ProjDirPath}/../../../BAS/inc&quot; &quot;-I${ProjDirPath}/../../../BAS/examples/xedge/src&quot; &quot;-I${ProjDirPath}/../../../.deps/devices/RT1020/MIMXRT1021&quot; &quot;-I${ProjDirPath}/../../../.deps/devices/RT1020/MIMXRT1021/drivers&quot; &quot;-I${ProjDirPath}/../../../.deps/devices/RT1050/MIMXRT1052/xip&quot; &quot;-I${ProjDirPath}/../../../.deps/cmsis/Core/Include&quot; &quot;-I${ProjDirPath}/../../../.deps/board-examples/_boards/evkmimxrt1020&quot; &quot;-I${ProjDirPath}/../../../.deps/board-examples/_boards/evkmimxrt1020/xip&quot; &quot;-I${ProjDirPath}/../../../.deps/board-examples/_boards/evkmimxrt1020/common/clock&quot; &quot;-I${ProjDirPath}/../../../.deps/board-examples/_boards/evkmimxrt1020/driver_examples/enet/txrx_transfer&quot; &quot;-I${ProjDirPath}/../../../.deps/devices/RT1020/periph&quot; &quot;-I${ProjDirPath}/../../../.deps/examples/evkmimxrt1020/azure_rtos_examples/filex_levelx_mflash&quot; &quot;-I${ProjDirPath}/../../../.deps/sdk/drivers/common&quot; &quot;-I${ProjDirPath}/../../../.deps/sdk/drivers/igpio&quot; &quot;-I${ProjDirPath}/../../../.deps/sdk/drivers/lpuart&quot; &quot;-I${ProjDirPath}/../../../.deps/sdk/drivers/enet&quot; &quot;-I${ProjDirPath}/../../../.deps/sdk/drivers/trng&quot; &quot;-I${ProjDirPath}/../../../.deps/sdk/drivers/flexspi&quot; &quot;-I${ProjDirPath}/../../../.deps/sdk/drivers/cache/armv7-m7&quot; &quot;-I${ProjDirPath}/../../../.deps/components/phy&quot; &quot;-I${ProjDirPath}/../../../.deps/components/phy/device/phyksz8081&quot; &quot;-I${ProjDirPath}/../../../.deps/components/uart&quot; &quot;-I${ProjDirPath}/../../../.deps/components/serial_manager&quot; &quot;-I${ProjDirPath}/../../../.deps/components/lists&quot; &quot;-I${ProjDirPath}/../../../.deps/components/assert&quot; &quot;-I${ProjDirPath}/../../../.deps/components/str&quot; &quot;-I${ProjDirPath}/../../../.deps/components/debug_console_lite&quot; &quot;-I${ProjDirPath}/../../../.deps/components/flash/mflash&quot; &quot;-I${ProjDirPath}/../../../.deps/components/flash/mflash/mimxrt1021&quot; &quot;-I${ProjDirPath}/../../../.deps/nxp-rtos/ports/netxduo&quot; &quot;-I${ProjDirPath}/../../../.deps/netxduo/ports/cortex_m7/gnu/inc&quot; &quot;-I${ProjDirPath}/../../../.deps/netxduo/common/inc&quot; &quot;-I${ProjDirPath}/../../../.deps/netxduo/addons/auto_ip&quot; &quot;-I${ProjDirPath}/../../../.deps/netxduo/addons/azure_iot&quot; &quot;-I${ProjDirPath}/../../../.deps/netxduo/addons/BSD&quot; &quot;-I${ProjDirPath}/../../../.deps/netxduo/addons/cloud&quot; &quot;-I${ProjDirPath}/../../../.deps/netxduo/addons/dhcp&quot; &quot;-I${ProjDirPath}/../../../.deps/netxduo/addons/dns&quot; &quot;-I${ProjDirPath}/../../../.deps/netxduo/addons/ftp&quot; &quot;-I${ProjDirPath}/../../../.deps/netxduo/addons/http&quot; &quot;-I${ProjDirPath}/../../../.deps/netxduo/addons/mdns&quot; &quot;-I${ProjDirPath}/../../../.deps/netxduo/addons/mqtt&quot; &quot;-I${ProjDirPath}/../../../.deps/netxduo/addons/nat&quot; &quot;-I${ProjDirPath}/../../../.deps/netxduo/addons/pop3&quot; &quot;-I${ProjDirPath}/../../../.deps/netxduo/addons/ppp&quot; &quot;-I${ProjDirPath}/../../../.deps/netxduo/addons/pppoe&quot; &quot;-I${ProjDirPath}/../../../.deps/netxduo/addons/ptp&quot; &quot;-I${ProjDirPath}/../../../.deps/netxduo/addons/smtp&quot; &quot;-I${ProjDirPath}/../../../.deps/netxduo/addons/snmp&quot; &quot;-I${ProjDirPath}/../../../.deps/netxduo/addons/sntp&quot; &quot;-I${ProjDirPath}/../../../.deps/netxduo/addons/telnet&quot; &quot;-I${ProjDirPath}/../../../.deps/netxduo/addons/tftp&quot; &quot;-I${ProjDirPath}/../../../.deps/netxduo/addons/web&quot; &quot;-I${ProjDirPath}/../../../.deps/netxduo/addons/websocket&quot; &quot;-I${ProjDirPath}/../../../.deps/netxduo/addons/rtp&quot; &quot;-I${ProjDirPath}/../../../.deps/netxduo/addons/rtsp&quot; &quot;-I${ProjDirPath}/../../../.deps/netxduo/crypto_libraries/inc&quot; &quot;-I${ProjDirPath}/../../../.deps/netxduo/nx_secure/inc&quot; &quot;-I${ProjDirPath}/../../../.deps/netxduo/nx_secure/ports&quot; &quot;-I${ProjDirPath}/../../../.deps/netxduo/tsn/inc&quot; -I./boards/rt1020-evk/netxduo/custom_inc &quot;-I${ProjDirPath}/../../../.deps/levelx/common/inc&quot; -I./boards/rt1020-evk/levelx/custom_inc &quot;-I${ProjDirPath}/../../../.deps/filex/ports/cortex_m7/gnu/inc&quot; &quot;-I${ProjDirPath}/../../../.deps/filex/common/inc&quot; -I./boards/rt1020-evk/filex/custom_inc -isystem &quot;${ProjDirPath}/../../../.deps/threadx/ports/cortex_m7/gnu/inc&quot; -isystem &quot;${ProjDirPath}/../../../.deps/threadx/common/inc&quot; -isystem ./boards/rt1020-evk/threadx/custom_inc -mcpu=cortex-m7 -mthumb -mfpu=fpv5-d16 -mfloat-abi=hard -ffunction-sections -fdata-sections -fno-common -UNDEBUG &quot;-ffile-prefix-map=$(realpath ../../../..)=.&quot; &quot;-ffile-prefix-map=$(realpath ../../../../.deps)=deps&quot; &quot;-ffile-prefix-map=$(CURDIR)=build&quot; -Og -g3 -MMD -MP -MF &quot;$(@:%.c.obj=%.d)&quot; -MT &quot;$@&quot; -o ${OUTPUT} -c ${INPUTS}">
+                <inputType id="xedge.input.Application_Startup" superClass="com.crt.advproject.compiler.input" />
+                <outputType id="xedge.output.Application_Startup" superClass="cdt.managedbuild.tool.gnu.c.compiler.output" outputs="c.obj" buildVariable="OBJS" />
+                <option id="xedge.includes.Application_Startup" superClass="gnu.c.compiler.option.include.paths" valueType="includePath">
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../boards/rt1020-evk/config" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../BAS/inc/arch/ThreadX" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../BAS/inc" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../BAS/examples/xedge/src" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/devices/RT1020/MIMXRT1021" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/devices/RT1020/MIMXRT1021/drivers" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/devices/RT1050/MIMXRT1052/xip" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/cmsis/Core/Include" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/board-examples/_boards/evkmimxrt1020" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/board-examples/_boards/evkmimxrt1020/xip" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/board-examples/_boards/evkmimxrt1020/common/clock" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/board-examples/_boards/evkmimxrt1020/driver_examples/enet/txrx_transfer" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/devices/RT1020/periph" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/examples/evkmimxrt1020/azure_rtos_examples/filex_levelx_mflash" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/sdk/drivers/common" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/sdk/drivers/igpio" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/sdk/drivers/lpuart" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/sdk/drivers/enet" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/sdk/drivers/trng" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/sdk/drivers/flexspi" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/sdk/drivers/cache/armv7-m7" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/components/phy" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/components/phy/device/phyksz8081" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/components/uart" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/components/serial_manager" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/components/lists" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/components/assert" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/components/str" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/components/debug_console_lite" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/components/flash/mflash" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/components/flash/mflash/mimxrt1021" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/nxp-rtos/ports/netxduo" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/netxduo/ports/cortex_m7/gnu/inc" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/netxduo/common/inc" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/netxduo/addons/auto_ip" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/netxduo/addons/azure_iot" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/netxduo/addons/BSD" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/netxduo/addons/cloud" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/netxduo/addons/dhcp" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/netxduo/addons/dns" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/netxduo/addons/ftp" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/netxduo/addons/http" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/netxduo/addons/mdns" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/netxduo/addons/mqtt" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/netxduo/addons/nat" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/netxduo/addons/pop3" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/netxduo/addons/ppp" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/netxduo/addons/pppoe" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/netxduo/addons/ptp" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/netxduo/addons/smtp" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/netxduo/addons/snmp" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/netxduo/addons/sntp" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/netxduo/addons/telnet" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/netxduo/addons/tftp" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/netxduo/addons/web" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/netxduo/addons/websocket" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/netxduo/addons/rtp" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/netxduo/addons/rtsp" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/netxduo/crypto_libraries/inc" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/netxduo/nx_secure/inc" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/netxduo/nx_secure/ports" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/netxduo/tsn/inc" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/Debug/boards/rt1020-evk/netxduo/custom_inc" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/levelx/common/inc" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/Debug/boards/rt1020-evk/levelx/custom_inc" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/filex/ports/cortex_m7/gnu/inc" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/filex/common/inc" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/Debug/boards/rt1020-evk/filex/custom_inc" />
+                </option>
+              </tool>
+            </toolChain>
+          </folderInfo>
+          <folderInfo id="com.crt.advproject.config.exe.debug.xedge.Ethernet_PHY" name="Ethernet_PHY" resourcePath="Ethernet_PHY">
+            <toolChain id="xedge.tc.Ethernet_PHY" name="NXP MCU Tools" superClass="com.crt.advproject.toolchain.exe.debug">
+              <tool id="xedge.Ethernet_PHY" name="MCU C Compiler" superClass="com.crt.advproject.gcc.exe.debug" command="arm-none-eabi-gcc" commandLinePattern="${COMMAND} -DCPU_MIMXRT1021DAG5A -DFX_INCLUDE_USER_DEFINE_FILE -DLX_INCLUDE_USER_DEFINE_FILE -DLX_USE_MFLASH -DNX_INCLUDE_USER_DEFINE_FILE -DSDK_DEBUGCONSOLE=1 -DSDK_DEBUGCONSOLE_UART=1 -DSERIAL_PORT_TYPE_UART=1 -DSKIP_SYSCLK_INIT -DTX_INCLUDE_USER_DEFINE_FILE -DXIP_BOOT_HEADER_DCD_ENABLE=1 -DXIP_BOOT_HEADER_ENABLE=1 -DXIP_EXTERNAL_FLASH=1 -D__STARTUP_CLEAR_BSS -D__STARTUP_INITIALIZE_NONCACHEDATA -DFSL_FEATURE_PHYKSZ8081_USE_RMII50M_MODE &quot;-I${ProjDirPath}/../../../boards/rt1020-evk/config&quot; &quot;-I${ProjDirPath}/../../../BAS/inc/arch/ThreadX&quot; &quot;-I${ProjDirPath}/../../../BAS/inc&quot; &quot;-I${ProjDirPath}/../../../BAS/examples/xedge/src&quot; &quot;-I${ProjDirPath}/../../../.deps/devices/RT1020/MIMXRT1021&quot; &quot;-I${ProjDirPath}/../../../.deps/devices/RT1020/MIMXRT1021/drivers&quot; &quot;-I${ProjDirPath}/../../../.deps/devices/RT1050/MIMXRT1052/xip&quot; &quot;-I${ProjDirPath}/../../../.deps/cmsis/Core/Include&quot; &quot;-I${ProjDirPath}/../../../.deps/board-examples/_boards/evkmimxrt1020&quot; &quot;-I${ProjDirPath}/../../../.deps/board-examples/_boards/evkmimxrt1020/xip&quot; &quot;-I${ProjDirPath}/../../../.deps/board-examples/_boards/evkmimxrt1020/common/clock&quot; &quot;-I${ProjDirPath}/../../../.deps/board-examples/_boards/evkmimxrt1020/driver_examples/enet/txrx_transfer&quot; &quot;-I${ProjDirPath}/../../../.deps/devices/RT1020/periph&quot; &quot;-I${ProjDirPath}/../../../.deps/examples/evkmimxrt1020/azure_rtos_examples/filex_levelx_mflash&quot; &quot;-I${ProjDirPath}/../../../.deps/sdk/drivers/common&quot; &quot;-I${ProjDirPath}/../../../.deps/sdk/drivers/igpio&quot; &quot;-I${ProjDirPath}/../../../.deps/sdk/drivers/lpuart&quot; &quot;-I${ProjDirPath}/../../../.deps/sdk/drivers/enet&quot; &quot;-I${ProjDirPath}/../../../.deps/sdk/drivers/trng&quot; &quot;-I${ProjDirPath}/../../../.deps/sdk/drivers/flexspi&quot; &quot;-I${ProjDirPath}/../../../.deps/sdk/drivers/cache/armv7-m7&quot; &quot;-I${ProjDirPath}/../../../.deps/components/phy&quot; &quot;-I${ProjDirPath}/../../../.deps/components/phy/device/phyksz8081&quot; &quot;-I${ProjDirPath}/../../../.deps/components/uart&quot; &quot;-I${ProjDirPath}/../../../.deps/components/serial_manager&quot; &quot;-I${ProjDirPath}/../../../.deps/components/lists&quot; &quot;-I${ProjDirPath}/../../../.deps/components/assert&quot; &quot;-I${ProjDirPath}/../../../.deps/components/str&quot; &quot;-I${ProjDirPath}/../../../.deps/components/debug_console_lite&quot; &quot;-I${ProjDirPath}/../../../.deps/components/flash/mflash&quot; &quot;-I${ProjDirPath}/../../../.deps/components/flash/mflash/mimxrt1021&quot; &quot;-I${ProjDirPath}/../../../.deps/nxp-rtos/ports/netxduo&quot; &quot;-I${ProjDirPath}/../../../.deps/netxduo/ports/cortex_m7/gnu/inc&quot; &quot;-I${ProjDirPath}/../../../.deps/netxduo/common/inc&quot; &quot;-I${ProjDirPath}/../../../.deps/netxduo/addons/auto_ip&quot; &quot;-I${ProjDirPath}/../../../.deps/netxduo/addons/azure_iot&quot; &quot;-I${ProjDirPath}/../../../.deps/netxduo/addons/BSD&quot; &quot;-I${ProjDirPath}/../../../.deps/netxduo/addons/cloud&quot; &quot;-I${ProjDirPath}/../../../.deps/netxduo/addons/dhcp&quot; &quot;-I${ProjDirPath}/../../../.deps/netxduo/addons/dns&quot; &quot;-I${ProjDirPath}/../../../.deps/netxduo/addons/ftp&quot; &quot;-I${ProjDirPath}/../../../.deps/netxduo/addons/http&quot; &quot;-I${ProjDirPath}/../../../.deps/netxduo/addons/mdns&quot; &quot;-I${ProjDirPath}/../../../.deps/netxduo/addons/mqtt&quot; &quot;-I${ProjDirPath}/../../../.deps/netxduo/addons/nat&quot; &quot;-I${ProjDirPath}/../../../.deps/netxduo/addons/pop3&quot; &quot;-I${ProjDirPath}/../../../.deps/netxduo/addons/ppp&quot; &quot;-I${ProjDirPath}/../../../.deps/netxduo/addons/pppoe&quot; &quot;-I${ProjDirPath}/../../../.deps/netxduo/addons/ptp&quot; &quot;-I${ProjDirPath}/../../../.deps/netxduo/addons/smtp&quot; &quot;-I${ProjDirPath}/../../../.deps/netxduo/addons/snmp&quot; &quot;-I${ProjDirPath}/../../../.deps/netxduo/addons/sntp&quot; &quot;-I${ProjDirPath}/../../../.deps/netxduo/addons/telnet&quot; &quot;-I${ProjDirPath}/../../../.deps/netxduo/addons/tftp&quot; &quot;-I${ProjDirPath}/../../../.deps/netxduo/addons/web&quot; &quot;-I${ProjDirPath}/../../../.deps/netxduo/addons/websocket&quot; &quot;-I${ProjDirPath}/../../../.deps/netxduo/addons/rtp&quot; &quot;-I${ProjDirPath}/../../../.deps/netxduo/addons/rtsp&quot; &quot;-I${ProjDirPath}/../../../.deps/netxduo/crypto_libraries/inc&quot; &quot;-I${ProjDirPath}/../../../.deps/netxduo/nx_secure/inc&quot; &quot;-I${ProjDirPath}/../../../.deps/netxduo/nx_secure/ports&quot; &quot;-I${ProjDirPath}/../../../.deps/netxduo/tsn/inc&quot; -I./boards/rt1020-evk/netxduo/custom_inc &quot;-I${ProjDirPath}/../../../.deps/levelx/common/inc&quot; -I./boards/rt1020-evk/levelx/custom_inc &quot;-I${ProjDirPath}/../../../.deps/filex/ports/cortex_m7/gnu/inc&quot; &quot;-I${ProjDirPath}/../../../.deps/filex/common/inc&quot; -I./boards/rt1020-evk/filex/custom_inc -isystem &quot;${ProjDirPath}/../../../.deps/threadx/ports/cortex_m7/gnu/inc&quot; -isystem &quot;${ProjDirPath}/../../../.deps/threadx/common/inc&quot; -isystem ./boards/rt1020-evk/threadx/custom_inc -mcpu=cortex-m7 -mthumb -mfpu=fpv5-d16 -mfloat-abi=hard -ffunction-sections -fdata-sections -fno-common -UNDEBUG &quot;-ffile-prefix-map=$(realpath ../../../..)=.&quot; &quot;-ffile-prefix-map=$(realpath ../../../../.deps)=deps&quot; &quot;-ffile-prefix-map=$(CURDIR)=build&quot; -Og -g3 -MMD -MP -MF &quot;$(@:%.c.obj=%.d)&quot; -MT &quot;$@&quot; -o ${OUTPUT} -c ${INPUTS}">
+                <inputType id="xedge.input.Ethernet_PHY" superClass="com.crt.advproject.compiler.input" />
+                <outputType id="xedge.output.Ethernet_PHY" superClass="cdt.managedbuild.tool.gnu.c.compiler.output" outputs="c.obj" buildVariable="OBJS" />
+                <option id="xedge.includes.Ethernet_PHY" superClass="gnu.c.compiler.option.include.paths" valueType="includePath">
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../boards/rt1020-evk/config" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../BAS/inc/arch/ThreadX" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../BAS/inc" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../BAS/examples/xedge/src" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/devices/RT1020/MIMXRT1021" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/devices/RT1020/MIMXRT1021/drivers" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/devices/RT1050/MIMXRT1052/xip" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/cmsis/Core/Include" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/board-examples/_boards/evkmimxrt1020" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/board-examples/_boards/evkmimxrt1020/xip" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/board-examples/_boards/evkmimxrt1020/common/clock" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/board-examples/_boards/evkmimxrt1020/driver_examples/enet/txrx_transfer" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/devices/RT1020/periph" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/examples/evkmimxrt1020/azure_rtos_examples/filex_levelx_mflash" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/sdk/drivers/common" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/sdk/drivers/igpio" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/sdk/drivers/lpuart" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/sdk/drivers/enet" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/sdk/drivers/trng" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/sdk/drivers/flexspi" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/sdk/drivers/cache/armv7-m7" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/components/phy" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/components/phy/device/phyksz8081" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/components/uart" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/components/serial_manager" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/components/lists" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/components/assert" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/components/str" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/components/debug_console_lite" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/components/flash/mflash" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/components/flash/mflash/mimxrt1021" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/nxp-rtos/ports/netxduo" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/netxduo/ports/cortex_m7/gnu/inc" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/netxduo/common/inc" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/netxduo/addons/auto_ip" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/netxduo/addons/azure_iot" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/netxduo/addons/BSD" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/netxduo/addons/cloud" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/netxduo/addons/dhcp" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/netxduo/addons/dns" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/netxduo/addons/ftp" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/netxduo/addons/http" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/netxduo/addons/mdns" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/netxduo/addons/mqtt" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/netxduo/addons/nat" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/netxduo/addons/pop3" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/netxduo/addons/ppp" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/netxduo/addons/pppoe" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/netxduo/addons/ptp" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/netxduo/addons/smtp" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/netxduo/addons/snmp" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/netxduo/addons/sntp" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/netxduo/addons/telnet" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/netxduo/addons/tftp" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/netxduo/addons/web" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/netxduo/addons/websocket" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/netxduo/addons/rtp" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/netxduo/addons/rtsp" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/netxduo/crypto_libraries/inc" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/netxduo/nx_secure/inc" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/netxduo/nx_secure/ports" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/netxduo/tsn/inc" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/Debug/boards/rt1020-evk/netxduo/custom_inc" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/levelx/common/inc" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/Debug/boards/rt1020-evk/levelx/custom_inc" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/filex/ports/cortex_m7/gnu/inc" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/filex/common/inc" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/Debug/boards/rt1020-evk/filex/custom_inc" />
+                </option>
+              </tool>
+            </toolChain>
+          </folderInfo>
+          <folderInfo id="com.crt.advproject.config.exe.debug.xedge.FileX" name="FileX" resourcePath="FileX">
+            <toolChain id="xedge.tc.FileX" name="NXP MCU Tools" superClass="com.crt.advproject.toolchain.exe.debug">
+              <tool id="xedge.FileX" name="MCU C Compiler" superClass="com.crt.advproject.gcc.exe.debug" command="arm-none-eabi-gcc" commandLinePattern="${COMMAND} -DCPU_MIMXRT1021DAG5A -DFX_INCLUDE_USER_DEFINE_FILE -DLX_USE_MFLASH -DSDK_DEBUGCONSOLE=1 -DSDK_DEBUGCONSOLE_UART=1 -DSERIAL_PORT_TYPE_UART=1 -DSKIP_SYSCLK_INIT -DTX_INCLUDE_USER_DEFINE_FILE -DXIP_BOOT_HEADER_DCD_ENABLE=1 -DXIP_BOOT_HEADER_ENABLE=1 -DXIP_EXTERNAL_FLASH=1 -D__STARTUP_CLEAR_BSS -D__STARTUP_INITIALIZE_NONCACHEDATA &quot;-I${ProjDirPath}/../../../.deps/filex/ports/cortex_m7/gnu/inc&quot; &quot;-I${ProjDirPath}/../../../.deps/filex/common/inc&quot; -I./boards/rt1020-evk/filex/custom_inc -isystem &quot;${ProjDirPath}/../../../.deps/threadx/ports/cortex_m7/gnu/inc&quot; -isystem &quot;${ProjDirPath}/../../../.deps/threadx/common/inc&quot; -isystem ./boards/rt1020-evk/threadx/custom_inc -mcpu=cortex-m7 -mthumb -mfpu=fpv5-d16 -mfloat-abi=hard -ffunction-sections -fdata-sections -fno-common -UNDEBUG &quot;-ffile-prefix-map=$(realpath ../../../..)=.&quot; &quot;-ffile-prefix-map=$(realpath ../../../../.deps)=deps&quot; &quot;-ffile-prefix-map=$(CURDIR)=build&quot; -Og -g3 -MMD -MP -MF &quot;$(@:%.c.obj=%.d)&quot; -MT &quot;$@&quot; -o ${OUTPUT} -c ${INPUTS}">
+                <inputType id="xedge.input.FileX" superClass="com.crt.advproject.compiler.input" />
+                <outputType id="xedge.output.FileX" superClass="cdt.managedbuild.tool.gnu.c.compiler.output" outputs="c.obj" buildVariable="OBJS" />
+                <option id="xedge.includes.FileX" superClass="gnu.c.compiler.option.include.paths" valueType="includePath">
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/filex/ports/cortex_m7/gnu/inc" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/filex/common/inc" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/Debug/boards/rt1020-evk/filex/custom_inc" />
+                </option>
+              </tool>
+            </toolChain>
+          </folderInfo>
+          <folderInfo id="com.crt.advproject.config.exe.debug.xedge.LevelX" name="LevelX" resourcePath="LevelX">
+            <toolChain id="xedge.tc.LevelX" name="NXP MCU Tools" superClass="com.crt.advproject.toolchain.exe.debug">
+              <tool id="xedge.LevelX" name="MCU C Compiler" superClass="com.crt.advproject.gcc.exe.debug" command="arm-none-eabi-gcc" commandLinePattern="${COMMAND} -DCPU_MIMXRT1021DAG5A -DFX_INCLUDE_USER_DEFINE_FILE -DLX_INCLUDE_USER_DEFINE_FILE -DLX_USE_MFLASH -DSDK_DEBUGCONSOLE=1 -DSDK_DEBUGCONSOLE_UART=1 -DSERIAL_PORT_TYPE_UART=1 -DSKIP_SYSCLK_INIT -DTX_INCLUDE_USER_DEFINE_FILE -DXIP_BOOT_HEADER_DCD_ENABLE=1 -DXIP_BOOT_HEADER_ENABLE=1 -DXIP_EXTERNAL_FLASH=1 -D__STARTUP_CLEAR_BSS -D__STARTUP_INITIALIZE_NONCACHEDATA &quot;-I${ProjDirPath}/../../../.deps/levelx/common/inc&quot; -I./boards/rt1020-evk/levelx/custom_inc &quot;-I${ProjDirPath}/../../../.deps/filex/ports/cortex_m7/gnu/inc&quot; &quot;-I${ProjDirPath}/../../../.deps/filex/common/inc&quot; -I./boards/rt1020-evk/filex/custom_inc -isystem &quot;${ProjDirPath}/../../../.deps/threadx/ports/cortex_m7/gnu/inc&quot; -isystem &quot;${ProjDirPath}/../../../.deps/threadx/common/inc&quot; -isystem ./boards/rt1020-evk/threadx/custom_inc -mcpu=cortex-m7 -mthumb -mfpu=fpv5-d16 -mfloat-abi=hard -ffunction-sections -fdata-sections -fno-common -UNDEBUG &quot;-ffile-prefix-map=$(realpath ../../../..)=.&quot; &quot;-ffile-prefix-map=$(realpath ../../../../.deps)=deps&quot; &quot;-ffile-prefix-map=$(CURDIR)=build&quot; -Og -g3 -MMD -MP -MF &quot;$(@:%.c.obj=%.d)&quot; -MT &quot;$@&quot; -o ${OUTPUT} -c ${INPUTS}">
+                <inputType id="xedge.input.LevelX" superClass="com.crt.advproject.compiler.input" />
+                <outputType id="xedge.output.LevelX" superClass="cdt.managedbuild.tool.gnu.c.compiler.output" outputs="c.obj" buildVariable="OBJS" />
+                <option id="xedge.includes.LevelX" superClass="gnu.c.compiler.option.include.paths" valueType="includePath">
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/levelx/common/inc" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/Debug/boards/rt1020-evk/levelx/custom_inc" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/filex/ports/cortex_m7/gnu/inc" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/filex/common/inc" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/Debug/boards/rt1020-evk/filex/custom_inc" />
+                </option>
+              </tool>
+            </toolChain>
+          </folderInfo>
+          <folderInfo id="com.crt.advproject.config.exe.debug.xedge.NetX_Duo" name="NetX_Duo" resourcePath="NetX_Duo">
+            <toolChain id="xedge.tc.NetX_Duo" name="NXP MCU Tools" superClass="com.crt.advproject.toolchain.exe.debug">
+              <tool id="xedge.NetX_Duo" name="MCU C Compiler" superClass="com.crt.advproject.gcc.exe.debug" command="arm-none-eabi-gcc" commandLinePattern="${COMMAND} -DCPU_MIMXRT1021DAG5A -DLX_USE_MFLASH -DNX_INCLUDE_USER_DEFINE_FILE -DSDK_DEBUGCONSOLE=1 -DSDK_DEBUGCONSOLE_UART=1 -DSERIAL_PORT_TYPE_UART=1 -DSKIP_SYSCLK_INIT -DTX_INCLUDE_USER_DEFINE_FILE -DXIP_BOOT_HEADER_DCD_ENABLE=1 -DXIP_BOOT_HEADER_ENABLE=1 -DXIP_EXTERNAL_FLASH=1 -D__STARTUP_CLEAR_BSS -D__STARTUP_INITIALIZE_NONCACHEDATA &quot;-I${ProjDirPath}/../../../.deps/netxduo/ports/cortex_m7/gnu/inc&quot; &quot;-I${ProjDirPath}/../../../.deps/netxduo/common/inc&quot; &quot;-I${ProjDirPath}/../../../.deps/netxduo/addons/auto_ip&quot; &quot;-I${ProjDirPath}/../../../.deps/netxduo/addons/azure_iot&quot; &quot;-I${ProjDirPath}/../../../.deps/netxduo/addons/BSD&quot; &quot;-I${ProjDirPath}/../../../.deps/netxduo/addons/cloud&quot; &quot;-I${ProjDirPath}/../../../.deps/netxduo/addons/dhcp&quot; &quot;-I${ProjDirPath}/../../../.deps/netxduo/addons/dns&quot; &quot;-I${ProjDirPath}/../../../.deps/netxduo/addons/ftp&quot; &quot;-I${ProjDirPath}/../../../.deps/netxduo/addons/http&quot; &quot;-I${ProjDirPath}/../../../.deps/netxduo/addons/mdns&quot; &quot;-I${ProjDirPath}/../../../.deps/netxduo/addons/mqtt&quot; &quot;-I${ProjDirPath}/../../../.deps/netxduo/addons/nat&quot; &quot;-I${ProjDirPath}/../../../.deps/netxduo/addons/pop3&quot; &quot;-I${ProjDirPath}/../../../.deps/netxduo/addons/ppp&quot; &quot;-I${ProjDirPath}/../../../.deps/netxduo/addons/pppoe&quot; &quot;-I${ProjDirPath}/../../../.deps/netxduo/addons/ptp&quot; &quot;-I${ProjDirPath}/../../../.deps/netxduo/addons/smtp&quot; &quot;-I${ProjDirPath}/../../../.deps/netxduo/addons/snmp&quot; &quot;-I${ProjDirPath}/../../../.deps/netxduo/addons/sntp&quot; &quot;-I${ProjDirPath}/../../../.deps/netxduo/addons/telnet&quot; &quot;-I${ProjDirPath}/../../../.deps/netxduo/addons/tftp&quot; &quot;-I${ProjDirPath}/../../../.deps/netxduo/addons/web&quot; &quot;-I${ProjDirPath}/../../../.deps/netxduo/addons/websocket&quot; &quot;-I${ProjDirPath}/../../../.deps/netxduo/addons/rtp&quot; &quot;-I${ProjDirPath}/../../../.deps/netxduo/addons/rtsp&quot; &quot;-I${ProjDirPath}/../../../.deps/netxduo/crypto_libraries/inc&quot; &quot;-I${ProjDirPath}/../../../.deps/netxduo/nx_secure/inc&quot; &quot;-I${ProjDirPath}/../../../.deps/netxduo/nx_secure/ports&quot; &quot;-I${ProjDirPath}/../../../.deps/netxduo/tsn/inc&quot; -I./boards/rt1020-evk/netxduo/custom_inc -isystem &quot;${ProjDirPath}/../../../.deps/threadx/ports/cortex_m7/gnu/inc&quot; -isystem &quot;${ProjDirPath}/../../../.deps/threadx/common/inc&quot; -isystem ./boards/rt1020-evk/threadx/custom_inc -mcpu=cortex-m7 -mthumb -mfpu=fpv5-d16 -mfloat-abi=hard -ffunction-sections -fdata-sections -fno-common -UNDEBUG &quot;-ffile-prefix-map=$(realpath ../../../..)=.&quot; &quot;-ffile-prefix-map=$(realpath ../../../../.deps)=deps&quot; &quot;-ffile-prefix-map=$(CURDIR)=build&quot; -Og -g3 -MMD -MP -MF &quot;$(@:%.c.obj=%.d)&quot; -MT &quot;$@&quot; -o ${OUTPUT} -c ${INPUTS}">
+                <inputType id="xedge.input.NetX_Duo" superClass="com.crt.advproject.compiler.input" />
+                <outputType id="xedge.output.NetX_Duo" superClass="cdt.managedbuild.tool.gnu.c.compiler.output" outputs="c.obj" buildVariable="OBJS" />
+                <option id="xedge.includes.NetX_Duo" superClass="gnu.c.compiler.option.include.paths" valueType="includePath">
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/netxduo/ports/cortex_m7/gnu/inc" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/netxduo/common/inc" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/netxduo/addons/auto_ip" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/netxduo/addons/azure_iot" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/netxduo/addons/BSD" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/netxduo/addons/cloud" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/netxduo/addons/dhcp" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/netxduo/addons/dns" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/netxduo/addons/ftp" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/netxduo/addons/http" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/netxduo/addons/mdns" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/netxduo/addons/mqtt" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/netxduo/addons/nat" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/netxduo/addons/pop3" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/netxduo/addons/ppp" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/netxduo/addons/pppoe" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/netxduo/addons/ptp" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/netxduo/addons/smtp" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/netxduo/addons/snmp" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/netxduo/addons/sntp" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/netxduo/addons/telnet" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/netxduo/addons/tftp" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/netxduo/addons/web" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/netxduo/addons/websocket" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/netxduo/addons/rtp" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/netxduo/addons/rtsp" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/netxduo/crypto_libraries/inc" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/netxduo/nx_secure/inc" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/netxduo/nx_secure/ports" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/../../../.deps/netxduo/tsn/inc" />
+                  <listOptionValue builtIn="false" value="${ProjDirPath}/Debug/boards/rt1020-evk/netxduo/custom_inc" />
+                </option>
+              </tool>
+            </toolChain>
+          </folderInfo>
+          <folderInfo id="com.crt.advproject.config.exe.debug.xedge.ThreadX" name="ThreadX" resourcePath="ThreadX">
+            <toolChain id="xedge.tc.ThreadX" name="NXP MCU Tools" superClass="com.crt.advproject.toolchain.exe.debug">
+              <tool id="xedge.ThreadX" name="MCU C Compiler" superClass="com.crt.advproject.gcc.exe.debug" command="arm-none-eabi-gcc" commandLinePattern="${COMMAND} -DCPU_MIMXRT1021DAG5A -DLX_USE_MFLASH -DSDK_DEBUGCONSOLE=1 -DSDK_DEBUGCONSOLE_UART=1 -DSERIAL_PORT_TYPE_UART=1 -DSKIP_SYSCLK_INIT -DTX_INCLUDE_USER_DEFINE_FILE -DXIP_BOOT_HEADER_DCD_ENABLE=1 -DXIP_BOOT_HEADER_ENABLE=1 -DXIP_EXTERNAL_FLASH=1 -D__STARTUP_CLEAR_BSS -D__STARTUP_INITIALIZE_NONCACHEDATA -isystem &quot;${ProjDirPath}/../../../.deps/threadx/ports/cortex_m7/gnu/inc&quot; -isystem &quot;${ProjDirPath}/../../../.deps/threadx/common/inc&quot; -isystem ./boards/rt1020-evk/threadx/custom_inc -mcpu=cortex-m7 -mthumb -mfpu=fpv5-d16 -mfloat-abi=hard -ffunction-sections -fdata-sections -fno-common -UNDEBUG &quot;-ffile-prefix-map=$(realpath ../../../..)=.&quot; &quot;-ffile-prefix-map=$(realpath ../../../../.deps)=deps&quot; &quot;-ffile-prefix-map=$(CURDIR)=build&quot; -Og -g3 -MMD -MP -MF &quot;$(@:%.c.obj=%.d)&quot; -MT &quot;$@&quot; -o ${OUTPUT} -c ${INPUTS}">
+                <inputType id="xedge.input.ThreadX" superClass="com.crt.advproject.compiler.input" />
+                <outputType id="xedge.output.ThreadX" superClass="cdt.managedbuild.tool.gnu.c.compiler.output" outputs="c.obj" buildVariable="OBJS" />
+                <option id="xedge.includes.ThreadX" superClass="gnu.c.compiler.option.include.paths" valueType="includePath" />
+              </tool>
+            </toolChain>
+          </folderInfo>
+          <folderInfo id="com.crt.advproject.config.exe.debug.xedge.ThreadX_Assembly" name="ThreadX_Assembly" resourcePath="ThreadX_Assembly">
+            <toolChain id="xedge.tc.ThreadX_Assembly" name="NXP MCU Tools" superClass="com.crt.advproject.toolchain.exe.debug">
+              <tool id="xedge.ThreadX_Assembly" name="MCU Assembler" superClass="com.crt.advproject.gas.exe.debug" command="arm-none-eabi-gcc" commandLinePattern="${COMMAND} -DCPU_MIMXRT1021DAG5A -DLX_USE_MFLASH -DSDK_DEBUGCONSOLE=1 -DSDK_DEBUGCONSOLE_UART=1 -DSERIAL_PORT_TYPE_UART=1 -DSKIP_SYSCLK_INIT -DTX_INCLUDE_USER_DEFINE_FILE -DXIP_BOOT_HEADER_DCD_ENABLE=1 -DXIP_BOOT_HEADER_ENABLE=1 -DXIP_EXTERNAL_FLASH=1 -D__STARTUP_CLEAR_BSS -D__STARTUP_INITIALIZE_NONCACHEDATA -isystem &quot;${ProjDirPath}/../../../.deps/threadx/ports/cortex_m7/gnu/inc&quot; -isystem &quot;${ProjDirPath}/../../../.deps/threadx/common/inc&quot; -isystem ./boards/rt1020-evk/threadx/custom_inc -mcpu=cortex-m7 -mthumb -mfpu=fpv5-d16 -mfloat-abi=hard -ffunction-sections -fdata-sections -fno-common -UNDEBUG &quot;-ffile-prefix-map=$(realpath ../../../..)=.&quot; &quot;-ffile-prefix-map=$(realpath ../../../../.deps)=deps&quot; &quot;-ffile-prefix-map=$(CURDIR)=build&quot; -Og -g3 -MMD -MP -MF &quot;$(@:%.S.obj=%.d)&quot; -MT &quot;$@&quot; -o ${OUTPUT} -c ${INPUTS}">
+                <inputType id="xedge.input.ThreadX_Assembly" superClass="com.crt.advproject.assembler.input" />
+                <outputType id="xedge.output.ThreadX_Assembly" superClass="cdt.managedbuild.tool.gnu.assembler.output" outputs="S.obj" buildVariable="OBJS" />
+              </tool>
+            </toolChain>
+          </folderInfo>
+          <sourceEntries>
+            <entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Application" />
+            <entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Application_Assembly" />
+            <entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Application_Startup" />
+            <entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Ethernet_PHY" />
+            <entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="FileX" />
+            <entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="LevelX" />
+            <entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="NetX_Duo" />
+            <entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="ThreadX" />
+            <entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="ThreadX_Assembly" />
+          </sourceEntries>
+        </configuration>
+      </storageModule>
+    </cconfiguration>
+  </storageModule>
+  <storageModule moduleId="cdtBuildSystem" version="4.0.0">
+    <project id="Xedge_RT1020.project" name="Xedge_RT1020" projectType="com.crt.advproject.projecttype.exe" />
+  </storageModule>
+  <storageModule moduleId="org.eclipse.cdt.core.LanguageSettingsProviders" />
+  <storageModule moduleId="com.nxp.mcuxpresso.core.datamodels">
+    <sdkName>SDK_2.x_EVK-MIMXRT1020</sdkName>
+    <sdkVersion>2.11.0</sdkVersion>
+    <boardId>evkmimxrt1020</boardId>
+    <core>cm7</core>
+    <coreId>core0_MIMXRT1021xxxxx</coreId>
+    <package>MIMXRT1021DAG5A</package>
+  </storageModule>
+  <storageModule moduleId="com.crt.config">
+    <projectStorage>&lt;TargetConfig&gt;&lt;Properties property_3="NXP" property_4="MIMXRT1021xxxxx" property_count="5" version="100300" /&gt;&lt;infoList vendor="NXP"&gt;&lt;info chip="MIMXRT1021xxxxx" name="MIMXRT1021xxxxx"&gt;&lt;chip&gt;&lt;name&gt;MIMXRT1021xxxxx&lt;/name&gt;&lt;family&gt;MIMXRT1020&lt;/family&gt;&lt;vendor&gt;NXP&lt;/vendor&gt;&lt;memory can_program="true" id="Flash" is_ro="true" size="0" type="Flash" /&gt;&lt;memory id="RAM" size="256" type="RAM" /&gt;&lt;memoryInstance derived_from="Flash" driver="MIMXRT1020-EVK_IS25LP064.cfx" edited="true" id="BOARD_FLASH" location="0x60000000" size="0x400000" /&gt;&lt;memoryInstance derived_from="RAM" edited="true" id="SRAM_DTC" location="0x20000000" size="0x10000" /&gt;&lt;memoryInstance derived_from="RAM" edited="true" id="SRAM_ITC" location="0x0" size="0x10000" /&gt;&lt;memoryInstance derived_from="RAM" edited="true" id="SRAM_OC" location="0x20200000" size="0x20000" /&gt;&lt;memoryInstance derived_from="RAM" edited="true" id="BOARD_SDRAM" location="0x80000000" size="0x1e00000" /&gt;&lt;memoryInstance derived_from="RAM" edited="true" id="NCACHE_REGION" location="0x81e00000" size="0x200000" /&gt;&lt;/chip&gt;&lt;processor&gt;&lt;name gcc_name="cortex-m7"&gt;Cortex-M7&lt;/name&gt;&lt;family&gt;Cortex-M&lt;/family&gt;&lt;/processor&gt;&lt;/info&gt;&lt;/infoList&gt;&lt;/TargetConfig&gt;</projectStorage>
+  </storageModule>
+</cproject>

@@ -1,0 +1,5 @@
+cmake_minimum_required(VERSION 3.20)
+project(Xedge4ThreadX LANGUAGES C ASM)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+get_filename_component(PUBLIC_ROOT "${CMAKE_CURRENT_LIST_DIR}" ABSOLUTE)
+add_subdirectory(boards/rt1020-evk)

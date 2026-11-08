@@ -1,0 +1,5 @@
+#ifndef RT1020_FX_USER_H
+#define RT1020_FX_USER_H
+#define FX_MAX_LONG_NAME_LEN 255
+#define FX_MAXIMUM_PATH 512
+#endif
