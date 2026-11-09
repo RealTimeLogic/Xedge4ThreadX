@@ -37,10 +37,10 @@ the board's time synchronization. The complete IDE procedure is below.
 
 ## Using an AI Agent (optional)
 
-**Build and flash with an AI agent:** Give your AI coding agent
-[AGENTS.md](AGENTS.md). It provides the command-line workflow for
-obtaining dependencies, building the firmware, programming the board, and
-checking startup, without using the MCUXpresso GUI.
+For AI-assisted builds and porting to other boards, give your coding
+agent [AGENTS.md](AGENTS.md). It provides a command-line workflow to
+get dependencies, build the firmware, program the board, and check
+startup without using the MCUXpresso GUI.
 
 ## Understanding the Xedge Architecture
 
