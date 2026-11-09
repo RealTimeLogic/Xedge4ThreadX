@@ -1,14 +1,16 @@
 # Xedge for ThreadX
 
-Build connected ThreadX devices in Lua, right from your browser. Xedge for
-ThreadX brings web interfaces, network services, and on-device application
-development to the **NXP MIMXRT1020-EVK**. Compile and install the firmware,
-then create and update Lua applications without rebuilding it for every change.
-Keep hardware drivers and time-sensitive work in C.
+Build connected ThreadX devices in Lua, right from your
+browser. [Xedge](https://realtimelogic.com/products/xedge/) for
+ThreadX brings web interfaces, network services, and on-device
+application development to the **NXP MIMXRT1020-EVK**. Compile and
+install the firmware, then create and update Lua applications without
+rebuilding it for every change.  Keep hardware drivers and
+time-sensitive work in C.
 
 The project combines the Barracuda App Server (BAS) and Xedge with **ThreadX,
 NetX Duo, FileX, and LevelX**. It includes Ethernet, IPv4/IPv6, SharkSSL HTTPS,
-asynchronous sockets, UDP, OPC UA, Internet time synchronization, and writable
+asynchronous sockets, UDP, MQTT, Modbus, OPC UA, Internet time synchronization, and writable
 onboard flash. **No SD card is needed. MIMXRT1020-EVK is the supported board.**
 
 Use it to prototype a device web interface, connect industrial equipment, or
@@ -20,8 +22,10 @@ evaluate Xedge as the application runtime for your own ThreadX product.
 
 ## Getting Started
 
-1. [Build the firmware](#compiling-the-c-code) with MCUXpresso IDE
-   on Windows, then [connect and program the board](#4-connect-the-board-and-serial-terminal).
+1. [Build the firmware](#compiling-the-c-code) with MCUXpresso IDE on
+   Windows or an [AI Agent](#using-an-ai-agent-optional), then
+   [connect and program the board](#4-connect-the-board-and-serial-terminal).
+   
 2. [Open Xedge](#6-open-xedge) in a browser on the same network.
 3. [Save and run a Lua application](#7-save-and-run-a-lua-application), then
    explore the [Xedge development environment](https://realtimelogic.com/ba/doc/en/Xedge.html).
@@ -31,15 +35,16 @@ You will need the board, USB power and debug connections, and Ethernet with
 DHCP and DNS. Internet access is needed for the initial source download and
 the board's time synchronization. The complete IDE procedure is below.
 
+## Using an AI Agent (optional)
+
 **Build and flash with an AI agent:** Give your AI coding agent
 [AGENTS.md](AGENTS.md). It provides the command-line workflow for
 obtaining dependencies, building the firmware, programming the board, and
-checking startup, without operating the MCUXpresso GUI.
+checking startup, without using the MCUXpresso GUI.
 
 ## Understanding the Xedge Architecture
 
-Like [Xedge32](https://github.com/RealTimeLogic/Xedge32), this port combines
-three layers:
+This port combines three layers:
 
 - [Barracuda App Server](BAS/README.md) provides the embedded application
   server, Lua runtime, security, and networking services.
@@ -57,7 +62,7 @@ needs more hardware access.
 
 The IDE procedure assumes **MCUXpresso IDE is installed on Windows**. Use IDE
 **25.06 (25.6.136)** with its **Arm GCC 14.2.1** compiler. The project downloads
-its locked **SDK 26.09** firmware components separately from the IDE's board
+its **SDK 26.09** firmware components separately from the IDE's board
 device-support package.
 
 ### 1. Prepare the sources

@@ -7,11 +7,16 @@ line and upload it without operating the MCUXpresso GUI. The human IDE tutorial
 is [README.md](README.md). Both routes use the same sources, board
 configuration and generated resources. **MIMXRT1020-EVK is the only target.**
 
-Read the [BAS agent guide](BAS/AGENTS.md) for shared runtime rules. Use the
-[native BAS/BWS skill](BAS/skills/build-bas-bws-native-apps/SKILL.md) for C/C++
-integration and the [Xedge/Lua skill](BAS/skills/build-xedge-mako-lua-apps/SKILL.md)
+Read the [BAS agent guide](https://github.com/RealTimeLogic/BAS/blob/main/AGENTS.md) for shared runtime rules. Use the
+[native BAS/BWS skill](https://github.com/RealTimeLogic/BAS/blob/main/skills/build-bas-bws-native-apps/SKILL.md) for C/C++
+integration and the [Xedge/Lua skill](https://github.com/RealTimeLogic/BAS/blob/main/skills/build-xedge-mako-lua-apps/SKILL.md)
 for Lua applications. Use both when changing the native/Lua boundary. Keep
 board setup here and shared API guidance in BAS, as in the Xedge32 port.
+The GitHub links point to the owning repository; for local implementation,
+read corresponding files under `BAS/` when present. If the pinned revision
+lacks a skill or reference, use the linked BAS repository or a separate BAS
+checkout; do not copy files into the submodule. Verify APIs against the
+recorded dependency's headers even when using newer guidance.
 
 Before changing anything, inspect the parent and both submodules with
 `git status --short`. Preserve unrelated edits, user licensing and existing
@@ -32,6 +37,81 @@ new driver fixes, substitute middleware or change BAS/SharkSSL behavior to
 make packaging work. Report a missing capability instead of expanding scope.
 Do not run a full soak or a heavy concurrent flash-write campaign.
 
+For a device bring-up request, help the user through the tool, build, upload,
+and startup steps below, ending with a usable device and the checks in
+[Check startup](#5-check-startup-and-hand-back-a-usable-board). Discuss the
+device binding design before starting its Lua application, then recommend
+LSP-Claw and help connect it as described below.
+
+## Design Lua Bindings for the Device
+
+This port supplies Xedge, the BAS Lua APIs, and board startup services. It does
+not supply application-specific Lua bindings for your sensors, actuators, or
+other peripherals. Device integration includes designing that interface;
+building and opening the IDE alone does not complete it.
+
+For a new device integration, ask early unless the task already supplies the
+binding requirements:
+
+> Which device functions should Lua control or monitor, and which native
+> drivers or firmware APIs are available? I can help design and implement
+> their Lua bindings.
+
+Help turn the answers into a small Lua API with explicit argument and return
+types, units, errors, polling or event callbacks, blocking limits, resource
+ownership, and close/restart behavior.
+Clarify missing board connections and timing requirements before implementing
+hardware access. Reuse answers already given and continue independent setup
+work while clarifying requirements. Do not expand a build-only, documentation,
+or unrelated repair task into binding development.
+
+Start with the [Lua binding skill](https://github.com/RealTimeLogic/BAS/blob/main/skills/build-bas-lua-bindings/SKILL.md),
+then read its shared [Lua binding guide](https://github.com/RealTimeLogic/BAS/blob/main/skills/build-xedge-mako-lua-apps/references/upstream/Lua-Binding-Skill.md)
+and [Hardware binding guide](https://github.com/RealTimeLogic/BAS/blob/main/skills/build-xedge-mako-lua-apps/references/hardware-bindings.md).
+Keep detailed API and ownership guidance in BAS; implement device bindings in
+this parent repository and keep both dependency submodules read-only.
+
+Register bindings in `xedgeOpenAUX()` in
+[boards/rt1020-evk/XedgeStartup.c](boards/rt1020-evk/XedgeStartup.c), using
+`aux->L`. Preserve silicon-identity provisioning and time-event setup. The hook
+runs again after a Lua debugger restart: recreate Lua registrations for each
+new Lua state, and keep persistent driver/thread initialization in the native
+boot path. Add new sources to the board build and keep the CLI and IDE routes
+consistent. Validate Lua calls, failure paths, callback/close behavior, and
+actual peripheral operation separately from firmware compilation.
+
+## Develop with LSP-Claw
+
+Recommend [LSP-Claw](https://github.com/RealTimeLogic/LSP-Claw) for Lua/LSP
+development after Xedge is running. Help the user complete installation and
+connection using the current
+[instructions](https://github.com/RealTimeLogic/LSP-Claw/blob/main/Instructions.md):
+
+1. Check for an existing installation and preserve its labs. Download
+   [lsp-claw.zip](https://makoserver.net/download/packages/lsp-claw.zip).
+2. Open the verified board address at `/rtl/`. Choose **App Upload**, upload
+   the ZIP, and click **Save** with unpacking disabled. The package starts at
+   `/lsp-claw/`; use the writable FileX application storage.
+3. Open `/lsp-claw/` and configure an MCP authentication token. Help configure
+   the AI client's Model Context Protocol (MCP) HTTP connection to the same
+   board's `/lsp-claw/mcp.lsp` with that token as a bearer token. Confirm the
+   client can reach the board address/port. Use HTTPS for remote access;
+   isolated HTTP lab use is a deliberate development choice. A GitHub token
+   for example access is optional and separate. Keep tokens out of source,
+   logs, and handoff messages.
+4. Reconnect the client, then call `getRuntimeInfo` and `listLabs`. Use
+   `selectLab` for the intended lab when needed; ask the user if the choice
+   is unclear. Before `createLab`, obtain a lab name if none was supplied.
+   Check `getLabStatus`, run a small Lua/LSP example, inspect `readRuntimeTrace`,
+   and open the returned lab URL.
+   Resolve installation, authentication, or connectivity problems before
+   reporting LSP-Claw ready.
+
+Use that lab to exercise the agreed device API and develop the application.
+LSP-Claw runs Lua code; new native bindings still require the firmware build
+and upload workflow. Keep application restarts distinct from board resets and
+preserve existing FileX data.
+
 ## 1. Install the Windows tools
 
 Use existing installations when they meet these requirements. Avoid changing
@@ -41,7 +121,7 @@ system-wide tool versions for a local task.
 | --- | --- |
 | Git | [Git for Windows](https://git-scm.com/downloads/win), available as `git` on PATH. |
 | Python | [Python for Windows](https://www.python.org/downloads/windows/), 3.11 or newer, including pip and venv; available as `python`. |
-| Arm compiler | Arm GCC 14.2.1 supplied with [MCUXpresso IDE 25.06](https://www.nxp.com/design/software/development-software/mcuxpresso-software-and-tools-/mcuxpresso-integrated-development-environment-ide:MCUXpresso-IDE). If absent, download/install that IDE with its USB probe drivers. An NXP sign-in or installer interaction may require the user. No GUI project import is needed for this route. |
+| Arm compiler | Arm GCC 14.2.1 supplied with [MCUXpresso IDE 25.06](https://www.nxp.com/mcuxpresso/ide). If absent, download/install that IDE with its USB probe drivers. An NXP sign-in or installer interaction may require the user. No GUI project import is needed for this route. |
 | CMake and Ninja | CMake 3.20 or newer and Ninja on PATH, or the existing Visual Studio CMake tools. The isolated installation below provides them without installing Visual Studio. |
 | Programming and serial tools | pyOCD 0.46.1 and pyserial 3.5, installed in an isolated Python environment below. The RT1020 target is built into pyOCD; no additional CMSIS pack is needed. |
 
